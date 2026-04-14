@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — ReviewFilter Global</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="hamburger" id="hamburger">☰</button>
+      <span class="topbar-title">Settings</span>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div style="max-width:600px;display:flex;flex-direction:column;gap:1.5rem;">
+
+      <!-- Business Profile -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">🏪 Business Profile</span>
+        </div>
+        <div class="section-card-body">
+
+          <div class="alert alert-error"   id="alert-profile-error"></div>
+          <div class="alert alert-success" id="alert-profile-success"></div>
+
+          <div class="form-group">
+            <label class="form-label" for="business-name">Business Name</label>
+            <input type="text" id="business-name" class="form-input" placeholder="Your business name" maxlength="80">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="location-label">Location Label</label>
+            <input type="text" id="location-label" class="form-input" placeholder="e.g. New York · Google Reviews" maxlength="60">
+            <div class="form-hint">Shown to customers on the review page.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="emoji">Business Emoji</label>
+            <input type="text" id="emoji" class="form-input" placeholder="🏪" maxlength="4" style="width:80px;">
+            <div class="form-hint">Shown on the customer review page as your icon.</div>
+          </div>
+
+          <button class="btn btn-primary" id="btn-save-profile">Save Profile</button>
+
+        </div>
+      </div>
+
+      <!-- Review Platform Links -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">⭐ Review Platform Links</span>
+        </div>
+        <div class="section-card-body">
+
+          <div class="alert alert-error"   id="alert-links-error"></div>
+          <div class="alert alert-success" id="alert-links-success"></div>
+
+          <p style="font-size:0.8125rem;color:var(--text-3);margin-bottom:1.25rem;line-height:1.6;">
+            Paste your review page links below. Happy customers (4–5 stars) will be sent
+            to whichever platform you choose when sending an invite.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="google-url">
+              Google Review Link
+            </label>
+            <input
+              type="url"
+              id="google-url"
+              class="form-input"
+              placeholder="https://g.page/r/YOUR_ID/review"
+            >
+            <div class="form-hint">
+              Find yours: Google Maps → your business → Share → Copy link. Or search
+              "Google review link generator".
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="yelp-url">
+              Yelp Review Link <span style="color:var(--text-3);font-weight:400;">(optional)</span>
+            </label>
+            <input
+              type="url"
+              id="yelp-url"
+              class="form-input"
+              placeholder="https://www.yelp.com/writeareview/biz/YOUR_ID"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="trustpilot-url">
+              Trustpilot Review Link <span style="color:var(--text-3);font-weight:400;">(optional)</span>
+            </label>
+            <input
+              type="url"
+              id="trustpilot-url"
+              class="form-input"
+              placeholder="https://www.trustpilot.com/evaluate/yourdomain.com"
+            >
+          </div>
+
+          <button class="btn btn-primary" id="btn-save-links">Save Links</button>
+
+        </div>
+      </div>
+
+      <!-- Plan & Billing -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">💳 Plan & Billing</span>
+        </div>
+        <div class="section-card-body">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+            <div>
+              <div style="font-size:0.8125rem;color:var(--text-3);margin-bottom:4px;">Current Plan</div>
+              <div style="font-size:1.25rem;font-weight:600;" id="plan-name">—</div>
+            </div>
+            <div>
+              <div style="font-size:0.8125rem;color:var(--text-3);margin-bottom:4px;">SMS Limit</div>
+              <div style="font-size:1.25rem;font-weight:600;" id="plan-sms-limit">—</div>
+            </div>
+            <div>
+              <div style="font-size:0.8125rem;color:var(--text-3);margin-bottom:4px;">Used This Month</div>
+              <div style="font-size:1.25rem;font-weight:600;" id="plan-sms-used">—</div>
+            </div>
+          </div>
+
+          <div class="usage-bar-track" style="margin-bottom:1.25rem;">
+            <div class="usage-bar-fill" id="plan-sms-bar" style="width:0%"></div>
+          </div>
+
+          <!-- Upgrade buttons → LemonSqueezy -->
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <a
+              href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/GROWTH_PLAN_ID"
+              target="_blank"
+              class="btn btn-primary"
+              id="btn-upgrade-growth"
+            >
+              Upgrade to Growth — $129/mo
+            </a>
+            <a
+              href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/AGENCY_PLAN_ID"
+              target="_blank"
+              class="btn btn-ghost"
+              id="btn-upgrade-agency"
+            >
+              Agency — $299/mo
+            </a>
+          </div>
+
+          <p style="font-size:0.75rem;color:var(--text-3);margin-top:0.875rem;">
+            Payments handled securely by LemonSqueezy. Cancel anytime.
+          </p>
+
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="section-card" style="border-color:rgba(239,68,68,0.2);">
+        <div class="section-card-header">
+          <span class="section-card-title" style="color:#fca5a5;">⚠️ Danger Zone</span>
+        </div>
+        <div class="section-card-body">
+          <p style="font-size:0.875rem;color:var(--text-3);margin-bottom:1rem;">
+            Signing out will end your session on this device.
+          </p>
+          <button class="btn btn-danger" id="btn-signout">Sign Out</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { supabase } from '/js/supabase.js';
+  import { renderSidebar, requireAuth, getProfile } from '/js/dashboard.js';
+
+  const session = await requireAuth();
+  if (!session) throw new Error('no session');
+
+  renderSidebar('settings');
+
+  const profile = await getProfile();
+
+  // ── POPULATE FIELDS ───────────────────────────────────────────
+  document.getElementById('business-name').value  = profile.business_name  || '';
+  document.getElementById('location-label').value = profile.location_label || '';
+  document.getElementById('emoji').value          = profile.emoji          || '🏪';
+  document.getElementById('google-url').value     = profile.google_review_url || '';
+  document.getElementById('yelp-url').value       = profile.yelp_url       || '';
+  document.getElementById('trustpilot-url').value = profile.trustpilot_url || '';
+
+  // Plan info
+  const used  = profile.sms_used_this_month ?? 0;
+  const limit = profile.sms_limit ?? 100;
+  const pct   = Math.min(Math.round((used / limit) * 100), 100);
+  const plan  = profile.plan;
+
+  document.getElementById('plan-name').textContent     = plan.charAt(0).toUpperCase() + plan.slice(1);
+  document.getElementById('plan-sms-limit').textContent = `${limit} SMS`;
+  document.getElementById('plan-sms-used').textContent  = `${used} SMS`;
+
+  const planBar = document.getElementById('plan-sms-bar');
+  planBar.style.width = pct + '%';
+  if (pct >= 90) planBar.classList.add('danger');
+  else if (pct >= 70) planBar.classList.add('warning');
+
+  // hide upgrade buttons if already on that plan or higher
+  if (plan === 'growth' || plan === 'agency') {
+    document.getElementById('btn-upgrade-growth').style.display = 'none';
+  }
+  if (plan === 'agency') {
+    document.getElementById('btn-upgrade-agency').style.display = 'none';
+  }
+
+  // ── SAVE PROFILE ──────────────────────────────────────────────
+  document.getElementById('btn-save-profile').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-save-profile');
+    const errEl = document.getElementById('alert-profile-error');
+    const sucEl = document.getElementById('alert-profile-success');
+    errEl.classList.remove('visible');
+    sucEl.classList.remove('visible');
+
+    const name  = document.getElementById('business-name').value.trim();
+    const label = document.getElementById('location-label').value.trim();
+    const emoji = document.getElementById('emoji').value.trim() || '🏪';
+
+    if (!name) {
+      errEl.textContent = 'Business name cannot be empty.';
+      errEl.classList.add('visible');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Saving…';
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ business_name: name, location_label: label, emoji })
+      .eq('id', profile.id);
+
+    btn.disabled = false;
+    btn.innerHTML = 'Save Profile';
+
+    if (error) {
+      errEl.textContent = error.message;
+      errEl.classList.add('visible');
+    } else {
+      sucEl.textContent = 'Profile saved successfully.';
+      sucEl.classList.add('visible');
+    }
+  });
+
+  // ── SAVE LINKS ────────────────────────────────────────────────
+  document.getElementById('btn-save-links').addEventListener('click', async () => {
+    const btn   = document.getElementById('btn-save-links');
+    const errEl = document.getElementById('alert-links-error');
+    const sucEl = document.getElementById('alert-links-success');
+    errEl.classList.remove('visible');
+    sucEl.classList.remove('visible');
+
+    const google     = document.getElementById('google-url').value.trim();
+    const yelp       = document.getElementById('yelp-url').value.trim();
+    const trustpilot = document.getElementById('trustpilot-url').value.trim();
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Saving…';
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        google_review_url: google || null,
+        yelp_url:          yelp   || null,
+        trustpilot_url:    trustpilot || null,
+      })
+      .eq('id', profile.id);
+
+    btn.disabled = false;
+    btn.innerHTML = 'Save Links';
+
+    if (error) {
+      errEl.textContent = error.message;
+      errEl.classList.add('visible');
+    } else {
+      sucEl.textContent = 'Review links saved successfully.';
+      sucEl.classList.add('visible');
+    }
+  });
+
+  // ── SIGN OUT ──────────────────────────────────────────────────
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/auth/login.html';
+  });
+</script>
+
+</body>
+</html>

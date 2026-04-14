@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Rate Your Experience</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0a0f1e;
+      --navy-2:     #111827;
+      --navy-3:     #1a2236;
+      --accent:     #2563eb;
+      --accent-2:   #3b82f6;
+      --accent-dim: rgba(37,99,235,0.10);
+      --accent-bdr: rgba(37,99,235,0.30);
+      --green:      #10b981;
+      --green-dim:  rgba(16,185,129,0.10);
+      --green-bdr:  rgba(16,185,129,0.25);
+      --red:        #ef4444;
+      --red-dim:    rgba(239,68,68,0.10);
+      --gold:       #fbbf24;
+      --text-1:     #f0f4ff;
+      --text-2:     #8b9ab8;
+      --text-3:     #4b5878;
+      --border:     rgba(255,255,255,0.08);
+      --border-2:   rgba(255,255,255,0.14);
+      --sans:       system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --radius:     12px;
+    }
+
+    html, body {
+      min-height: 100dvh;
+      font-family: var(--sans);
+      background: var(--navy);
+      color: var(--text-1);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--navy-2);
+      border: 1px solid var(--border-2);
+      border-radius: 20px;
+      padding: 2rem 1.75rem;
+      animation: fadeUp 0.35s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUSINESS HEADER ── */
+    .biz-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .biz-logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--navy-3);
+      border: 1px solid var(--border-2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.375rem;
+      flex-shrink: 0;
+    }
+
+    .biz-name {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 2px;
+    }
+
+    .biz-location {
+      font-size: 0.75rem;
+      color: var(--text-3);
+    }
+
+    .rfg-badge {
+      margin-left: auto;
+      font-size: 0.6rem;
+      color: var(--text-3);
+      text-align: right;
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    .rfg-badge span {
+      display: block;
+      font-size: 0.6875rem;
+      color: var(--accent-2);
+      font-weight: 500;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── RATING SCREEN ── */
+    .question {
+      font-size: 1.0625rem;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 0.375rem;
+      line-height: 1.5;
+    }
+
+    .question-sub {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      text-align: center;
+      margin-bottom: 1.875rem;
+      font-weight: 300;
+    }
+
+    .stars-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 0.875rem;
+    }
+
+    .star-btn {
+      width: 54px; height: 54px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-2);
+      background: var(--navy-3);
+      color: var(--text-3);
+      font-size: 1.375rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    .star-btn:hover  { transform: scale(1.1); }
+    .star-btn.active { transform: scale(1.08); }
+    .star-btn.lit    { color: var(--gold); border-color: rgba(251,191,36,0.45); background: rgba(251,191,36,0.08); }
+    .star-btn.low    { color: #f87171;     border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.08); }
+
+    .rating-label {
+      text-align: center;
+      font-size: 0.8125rem;
+      color: var(--text-3);
+      min-height: 20px;
+      margin-bottom: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    /* ── CONFIRM BUTTON ── */
+    .btn-confirm {
+      width: 100%;
+      height: 52px;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.2s, transform 0.15s, opacity 0.2s;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .btn-confirm.ready {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .btn-confirm.ready:hover  { background: var(--accent-2); }
+    .btn-confirm.ready:active { transform: scale(0.98); }
+
+    /* ── REDIRECT SCREEN ── */
+    .center-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem;
+      margin: 0 auto 1.25rem;
+      animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .screen-title {
+      font-size: 1.1875rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .screen-sub {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      text-align: center;
+      margin-bottom: 1.75rem;
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    .btn-google {
+      width: 100%;
+      height: 52px;
+      border-radius: var(--radius);
+      background: #fff;
+      color: #111;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-family: var(--sans);
+      transition: opacity 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-google:active { transform: scale(0.98); }
+
+    .google-logo {
+      width: 20px; height: 20px; flex-shrink: 0;
+    }
+
+    /* ── FEEDBACK SCREEN ── */
+    .form-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background: var(--navy-3);
+      border: 1px solid var(--border-2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.9375rem;
+      color: var(--text-1);
+      font-family: var(--sans);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .form-input { height: 46px; }
+
+    .form-textarea {
+      resize: none;
+      height: 110px;
+      line-height: 1.55;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: rgba(37,99,235,0.55);
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder {
+      color: var(--text-3);
+    }
+
+    .form-group { margin-bottom: 1rem; }
+
+    .btn-submit {
+      width: 100%;
+      height: 52px;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 0.25rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .btn-submit:hover  { background: var(--accent-2); }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    /* ── ANTI-GATING LINK (COMPLIANCE) ── */
+    .public-fallback {
+      margin-top: 1.25rem;
+      padding-top: 1.125rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .public-fallback p {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .public-fallback a {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+
+    .public-fallback a:hover { color: var(--text-1); }
+
+    /* ── THANK YOU SCREEN ── */
+    /* ── ERROR / LOADING SCREENS ── */
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border-2);
+      border-top-color: var(--accent-2);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── PAGE FOOTER ── */
+    .page-footer {
+      margin-top: 1.5rem;
+      font-size: 0.6875rem;
+      color: var(--text-3);
+      text-align: center;
+    }
+
+    .page-footer a { color: var(--accent-2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── LOADING ── -->
+<div class="card" id="screen-loading">
+  <div class="spinner"></div>
+  <p style="font-size:0.875rem;color:var(--text-2);text-align:center;">
+    Loading your review page…
+  </p>
+</div>
+
+<!-- ── ERROR ── -->
+<div class="card" id="screen-error" style="display:none;">
+  <div style="text-align:center;">
+    <div style="font-size:2rem;margin-bottom:1rem;">⚠️</div>
+    <div style="font-size:0.9375rem;font-weight:500;margin-bottom:0.5rem;"
+      id="error-title">Invalid link</div>
+    <div style="font-size:0.8125rem;color:var(--text-3);" id="error-msg">
+      This review link is invalid or has already been used.
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN CARD ── -->
+<div class="card" id="main-card" style="display:none;">
+
+  <!-- Business header -->
+  <div class="biz-header">
+    <div class="biz-logo" id="biz-emoji">🏪</div>
+    <div>
+      <div class="biz-name"     id="biz-name">Loading…</div>
+      <div class="biz-location" id="biz-location">—</div>
+    </div>
+    <div class="rfg-badge">
+      Powered by<span>ReviewFilter</span>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: Star Rating -->
+  <div class="screen active" id="screen-rating">
+    <p class="question">How was your experience?</p>
+    <p class="question-sub">Takes less than 30 seconds. No app needed.</p>
+
+    <div class="stars-row" id="stars-row">
+      <button class="star-btn" data-val="1" aria-label="1 star">★</button>
+      <button class="star-btn" data-val="2" aria-label="2 stars">★</button>
+      <button class="star-btn" data-val="3" aria-label="3 stars">★</button>
+      <button class="star-btn" data-val="4" aria-label="4 stars">★</button>
+      <button class="star-btn" data-val="5" aria-label="5 stars">★</button>
+    </div>
+
+    <div class="rating-label" id="rating-label"></div>
+
+    <button class="btn-confirm" id="btn-confirm">
+      Continue →
+    </button>
+  </div>
+
+  <!-- SCREEN 2A: Happy → Google redirect -->
+  <div class="screen" id="screen-redirect">
+    <div class="center-icon" style="background:var(--green-dim);border:1px solid var(--green-bdr);">
+      🌟
+    </div>
+    <h2 class="screen-title">Thank you so much!</h2>
+    <p class="screen-sub">
+      We are thrilled you had a great experience.
+      Would you mind sharing it online? It means the world to us.
+    </p>
+    <a href="#" id="redirect-btn" class="btn-google" target="_blank" rel="noopener">
+      <svg class="google-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Leave a Review
+    </a>
+    <p style="font-size:0.72rem;color:var(--text-3);text-align:center;margin-top:0.875rem;">
+      Opens in a new tab. Takes about one minute.
+    </p>
+  </div>
+
+  <!-- SCREEN 2B: Unhappy → Private feedback -->
+  <div class="screen" id="screen-feedback">
+    <div class="center-icon"
+      style="background:var(--accent-dim);border:1px solid var(--accent-bdr);">
+      💬
+    </div>
+    <h2 class="screen-title">We're sorry to hear that.</h2>
+    <p class="screen-sub">
+      Tell us what went wrong. This goes straight to the owner —
+      not the internet. We want to make it right.
+    </p>
+
+    <div class="form-group">
+      <label class="form-label" for="input-name">
+        Your name <span style="color:var(--text-3);font-weight:400;">(optional)</span>
+      </label>
+      <input type="text" id="input-name" class="form-input"
+        placeholder="e.g. Sarah" autocomplete="given-name">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="input-complaint">What could we do better?</label>
+      <textarea id="input-complaint" class="form-textarea"
+        placeholder="Tell us what happened…"></textarea>
+    </div>
+
+    <button class="btn-submit" id="btn-submit">
+      Send Private Feedback
+    </button>
+
+    <!-- ✅ ANTI-GATING COMPLIANCE LINK -->
+    <div class="public-fallback" id="public-fallback">
+      <p>Changed your mind? You can still share your experience publicly.</p>
+      <a href="#" id="public-review-link" target="_blank" rel="noopener">
+        Post a public review instead →
+      </a>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Thank you (after private feedback submitted) -->
+  <div class="screen" id="screen-thanks">
+    <div class="center-icon"
+      style="background:var(--green-dim);border:1px solid var(--green-bdr);">
+      ✅
+    </div>
+    <h2 class="screen-title">Message received.</h2>
+    <p class="screen-sub">
+      Thank you for letting us know. The owner has been notified
+      and will follow up with you shortly.
+    </p>
+  </div>
+
+</div>
+
+<p class="page-footer">
+  Secured by <a href="https://reviewfilterglobal.com" target="_blank">ReviewFilter Global</a>
+  · Your private feedback is encrypted and never posted publicly.
+</p>
+
+<script type="module">
+  // ── CONFIG ───────────────────────────────────────────────────
+  const SUPABASE_URL     = 'https://mvmqrrwqnvwyajgynjul.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12bXFycndxbnZ3eWFqZ3luanVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MjEzMzQsImV4cCI6MjA5MDk5NzMzNH0.Cp77f9Uez8fn60n2tMigfEmE--cnmJPxZqD-NBGty60';
+
+  const RATING_LABELS = {
+    1: '😞 Very poor — we want to fix this',
+    2: '😕 Below expectations',
+    3: '😐 It was okay',
+    4: '😊 Pretty good!',
+    5: '🤩 Excellent — thank you!',
+  };
+
+  // ── STATE ────────────────────────────────────────────────────
+  let selectedRating = 0;
+  let inviteData     = null;
+  let bizData        = null;
+
+  // ── HELPERS ──────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $(id).classList.add('active');
+  }
+
+  function showError(title, msg) {
+    $('screen-loading').style.display = 'none';
+    $('screen-error').style.display   = 'block';
+    $('main-card').style.display      = 'none';
+    $('error-title').textContent = title;
+    $('error-msg').textContent   = msg;
+  }
+
+  // ── SUPABASE FETCH (no SDK needed — plain fetch) ──────────────
+  async function sbGet(table, params) {
+    const url = new URL(`${SUPABASE_URL}/rest/v1/${table}`);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+    const res = await fetch(url, {
+      headers: {
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      }
+    });
+    return res.json();
+  }
+
+  async function sbPost(table, body) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: {
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type':  'application/json',
+        'Prefer':        'return=minimal',
+      },
+      body: JSON.stringify(body),
+    });
+    return res.ok;
+  }
+
+  async function sbPatch(table, filter, body) {
+    const url = new URL(`${SUPABASE_URL}/rest/v1/${table}`);
+    Object.entries(filter).forEach(([k, v]) => url.searchParams.set(k, v));
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    return res.ok;
+  }
+
+  // ── LOAD BUSINESS FROM TOKEN ──────────────────────────────────
+  async function init() {
+    const params  = new URLSearchParams(window.location.search);
+    const token   = params.get('token');
+
+    if (!token) {
+      showError('Invalid link', 'No review token found. Please check the link in your SMS.');
+      return;
+    }
+
+    try {
+      // 1. Get invite by token
+      const invites = await sbGet('invites', {
+        token:   `eq.${token}`,
+        select:  'id,business_id,platform,status,rating_given',
+      });
+
+      if (!invites || invites.length === 0) {
+        showError('Link not found', 'This review link is invalid or has expired.');
+        return;
+      }
+
+      inviteData = invites[0];
+
+      // 2. Get business profile
+      const profiles = await sbGet('profiles', {
+        id:     `eq.${inviteData.business_id}`,
+        select: 'id,business_name,location_label,emoji,google_review_url,yelp_url,trustpilot_url',
+      });
+
+      if (!profiles || profiles.length === 0) {
+        showError('Business not found', 'This review page is no longer active.');
+        return;
+      }
+
+      bizData = profiles[0];
+
+      // 3. Populate header
+      $('biz-emoji').textContent    = bizData.emoji || '🏪';
+      $('biz-name').textContent     = bizData.business_name;
+      $('biz-location').textContent = bizData.location_label || 'Review Request';
+
+      // 4. Set redirect URL based on platform chosen when invite was sent
+      const platform    = inviteData.platform || 'google';
+      const redirectUrl = platform === 'yelp'       ? bizData.yelp_url
+                        : platform === 'trustpilot' ? bizData.trustpilot_url
+                        : bizData.google_review_url;
+
+      const fallbackUrl = bizData.google_review_url || bizData.yelp_url || bizData.trustpilot_url || '#';
+
+      if (redirectUrl) {
+        $('redirect-btn').href     = redirectUrl;
+        $('public-review-link').href = redirectUrl;
+      } else {
+        $('redirect-btn').href     = fallbackUrl;
+        $('public-review-link').href = fallbackUrl;
+      }
+
+      // 5. Mark invite as opened
+      await sbPatch('invites', { token: `eq.${token}` }, {
+        opened_at: new Date().toISOString(),
+        status:    'opened',
+      });
+
+      // 6. Show main card
+      $('screen-loading').style.display = 'none';
+      $('main-card').style.display      = 'block';
+
+    } catch (err) {
+      console.error(err);
+      showError('Something went wrong', 'Please try again or contact the business directly.');
+    }
+  }
+
+  // ── STAR RATING LOGIC ─────────────────────────────────────────
+  const starBtns  = document.querySelectorAll('.star-btn');
+  const confirmBtn = $('btn-confirm');
+  const labelEl   = $('rating-label');
+
+  starBtns.forEach(btn => {
+    const val = parseInt(btn.dataset.val);
+
+    btn.addEventListener('pointerenter', () => {
+      if (selectedRating) return;
+      highlightStars(val);
+    });
+
+    btn.addEventListener('pointerleave', () => {
+      if (selectedRating) return;
+      clearStars();
+    });
+
+    btn.addEventListener('click', () => {
+      selectedRating = val;
+      highlightStars(val);
+      labelEl.textContent = RATING_LABELS[val] || '';
+      confirmBtn.classList.add('ready');
+    });
+  });
+
+  function highlightStars(val) {
+    starBtns.forEach(b => {
+      const bVal = parseInt(b.dataset.val);
+      b.classList.remove('lit','low','active');
+      if (bVal <= val) {
+        b.classList.add(val >= 4 ? 'lit' : 'low');
+        if (bVal === val) b.classList.add('active');
+      }
+    });
+  }
+
+  function clearStars() {
+    starBtns.forEach(b => b.classList.remove('lit','low','active'));
+  }
+
+  // ── CONFIRM → BRANCH ──────────────────────────────────────────
+  confirmBtn.addEventListener('click', async () => {
+    if (!selectedRating) return;
+
+    // Save rating to invite record
+    await sbPatch('invites', { token: `eq.${new URLSearchParams(window.location.search).get('token')}` }, {
+      rating_given: selectedRating,
+      status: 'rated',
+    });
+
+    if (selectedRating >= 4) {
+      // HAPPY → redirect screen
+      showScreen('screen-redirect');
+    } else {
+      // UNHAPPY → private feedback
+      showScreen('screen-feedback');
+    }
+  });
+
+  // ── SUBMIT PRIVATE FEEDBACK ───────────────────────────────────
+  $('btn-submit').addEventListener('click', async () => {
+    const name      = $('input-name').value.trim();
+    const complaint = $('input-complaint').value.trim();
+
+    if (!complaint) {
+      $('input-complaint').focus();
+      $('input-complaint').style.borderColor = 'rgba(239,68,68,0.5)';
+      return;
+    }
+
+    $('input-complaint').style.borderColor = '';
+    $('btn-submit').disabled = true;
+    $('btn-submit').innerHTML = `
+      <div style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);
+        border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;"></div>
+      Sending…`;
+
+    const ok = await sbPost('feedback_private', {
+      business_id:       bizData.id,
+      invite_id:         inviteData.id,
+      star_rating:       selectedRating,
+      reviewer_name:     name || null,
+      complaint,
+      submitted_at:      new Date().toISOString(),
+      resolution_status: 'action_required',
+    });
+
+    // Show thank you regardless — if it fails silently we still don't strand the customer
+    showScreen('screen-thanks');
+
+    // hide the fallback link after submission
+    const fallback = $('public-fallback');
+    if (fallback) fallback.style.display = 'none';
+  });
+
+  // ── START ─────────────────────────────────────────────────────
+  init();
+</script>
+
+</body>
+</html>
