@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Plan — ReviewFilter Global</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 40px;
+      background: var(--navy);
+    }
+
+    .onboard-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .onboard-header img {
+      height: 42px; width: auto;
+      margin: 0 auto 1.5rem;
+    }
+
+    .onboard-header h1 {
+      font-size: 1.625rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .onboard-header p {
+      font-size: 0.9375rem;
+      color: var(--text-2);
+      font-weight: 300;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Plans grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 860px;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    .plan-card {
+      background: var(--navy-2);
+      border: 1px solid var(--border-2);
+      border-radius: 16px;
+      padding: 2rem 1.75rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+
+    .plan-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-2px); }
+
+    .plan-card.featured {
+      border-color: var(--accent-bdr);
+      background: linear-gradient(140deg, rgba(37,99,235,0.09) 0%, var(--navy-2) 55%);
+    }
+
+    .plan-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff;
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 100px; white-space: nowrap;
+    }
+
+    .plan-name   { font-size: 0.78rem; font-weight: 500; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 0.625rem; }
+    .plan-price  { font-size: 2.5rem; font-weight: 600; margin-bottom: 0.25rem; line-height: 1; }
+    .plan-period { font-size: 0.78rem; color: var(--text-3); margin-bottom: 1.5rem; }
+
+    .plan-feats { list-style: none; margin-bottom: 1.75rem; flex: 1; }
+    .plan-feats li {
+      font-size: 0.875rem; color: var(--text-2); font-weight: 300;
+      padding: 7px 0; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .plan-feats li:last-child { border-bottom: none; }
+    .check { color: var(--green); }
+
+    .btn-plan {
+      display: block; text-align: center;
+      padding: 13px; border-radius: 10px;
+      font-size: 0.9375rem; font-weight: 500;
+      font-family: var(--sans);
+      transition: all 0.2s; min-height: 50px;
+      line-height: 1.4; cursor: pointer;
+      border: none; text-decoration: none;
+    }
+
+    .btn-plan-primary { background: var(--accent); color: #fff; }
+    .btn-plan-primary:hover { background: var(--accent-2); }
+
+    .btn-plan-ghost {
+      background: transparent; color: var(--text-2);
+      border: 1px solid var(--border-2);
+    }
+    .btn-plan-ghost:hover { border-color: rgba(255,255,255,0.22); color: var(--text-1); }
+
+    /* Skip link */
+    .skip-wrap {
+      text-align: center;
+      margin-top: 1.75rem;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    .skip-wrap a {
+      font-size: 0.8125rem;
+      color: var(--text-3);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+    .skip-wrap a:hover { color: var(--text-2); }
+
+    /* Payment note */
+    .pay-note {
+      font-size: 0.75rem; color: var(--text-3);
+      text-align: center; margin-top: 1.25rem;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .pdot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  </style>
+</head>
+<body>
+
+<div class="onboard-header">
+  <img src="/assets/img/logo.png" alt="ReviewFilter Global">
+  <h1 id="welcome-name">Welcome to ReviewFilter! 🎉</h1>
+  <p>Choose a plan to activate your account. You can upgrade or cancel anytime.</p>
+</div>
+
+<div class="plans-grid">
+
+  <!-- STARTER -->
+  <div class="plan-card">
+    <div class="plan-name">Starter</div>
+    <div class="plan-price">$49</div>
+    <div class="plan-period">per month · cancel anytime</div>
+    <ul class="plan-feats">
+      <li><span class="check">✓</span> 100 SMS invites / mo</li>
+      <li><span class="check">✓</span> 1 business location</li>
+      <li><span class="check">✓</span> Email alerts on complaints</li>
+      <li><span class="check">✓</span> Google + Yelp redirect</li>
+      <li><span class="check">✓</span> Private feedback dashboard</li>
+    </ul>
+    <!-- 🔴 REPLACE with your real LemonSqueezy Starter checkout URL -->
+    <a href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/STARTER_ID"
+      class="btn-plan btn-plan-ghost"
+      id="btn-starter">
+      Get Starter
+    </a>
+  </div>
+
+  <!-- GROWTH (featured) -->
+  <div class="plan-card featured">
+    <div class="plan-badge">Most popular</div>
+    <div class="plan-name">Growth</div>
+    <div class="plan-price">$129</div>
+    <div class="plan-period">per month · cancel anytime</div>
+    <ul class="plan-feats">
+      <li><span class="check">✓</span> 500 SMS invites / mo</li>
+      <li><span class="check">✓</span> Up to 5 locations</li>
+      <li><span class="check">✓</span> Email + SMS alerts</li>
+      <li><span class="check">✓</span> Google, Yelp, Trustpilot</li>
+      <li><span class="check">✓</span> Review analytics</li>
+      <li><span class="check">✓</span> Weekly digest email</li>
+    </ul>
+    <!-- 🔴 REPLACE with your real LemonSqueezy Growth checkout URL -->
+    <a href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/GROWTH_ID"
+      class="btn-plan btn-plan-primary"
+      id="btn-growth">
+      Start Growth Plan
+    </a>
+  </div>
+
+  <!-- AGENCY -->
+  <div class="plan-card">
+    <div class="plan-name">Agency</div>
+    <div class="plan-price">$299</div>
+    <div class="plan-period">per month · cancel anytime</div>
+    <ul class="plan-feats">
+      <li><span class="check">✓</span> Unlimited SMS</li>
+      <li><span class="check">✓</span> Unlimited locations</li>
+      <li><span class="check">✓</span> White-label dashboard</li>
+      <li><span class="check">✓</span> API access</li>
+      <li><span class="check">✓</span> Priority support</li>
+    </ul>
+    <!-- 🔴 REPLACE with your real LemonSqueezy Agency checkout URL -->
+    <a href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/AGENCY_ID"
+      class="btn-plan btn-plan-ghost"
+      id="btn-agency">
+      Get Agency
+    </a>
+  </div>
+
+</div>
+
+<p class="pay-note">
+  <span class="pdot"></span>
+  Payments by LemonSqueezy · Global cards, PayPal · Cancel anytime
+</p>
+
+<div class="skip-wrap">
+  <a href="/dashboard/index.html">Skip for now — explore the dashboard free →</a>
+</div>
+
+<script type="module">
+  import { supabase } from '/js/supabase.js';
+
+  // ── GUARD: must be logged in ──────────────────────────────────
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = '/auth/login.html';
+  }
+
+  // ── Personalise welcome ───────────────────────────────────────
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('business_name')
+    .eq('user_id', session.user.id)
+    .single();
+
+  if (profile) {
+    document.getElementById('welcome-name').textContent =
+      `Welcome, ${profile.business_name}! 🎉`;
+  }
+
+  // ── Append email to LemonSqueezy URLs ────────────────────────
+  // This pre-fills the checkout form with their email
+  const email = encodeURIComponent(session.user.email);
+
+  ['btn-starter', 'btn-growth', 'btn-agency'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn && btn.href && !btn.href.includes('YOUR_STORE')) {
+      const url = new URL(btn.href);
+      url.searchParams.set('checkout[email]', session.user.email);
+      btn.href = url.toString();
+    }
+  });
+</script>
+
+</body>
+</html>

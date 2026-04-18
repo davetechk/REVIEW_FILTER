@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — ReviewFilter Global</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:    #0a0f1e;
+      --navy-2:  #111827;
+      --navy-3:  #1a2236;
+      --accent:  #2563eb;
+      --accent-2:#3b82f6;
+      --text-1:  #f0f4ff;
+      --text-2:  #8b9ab8;
+      --text-3:  #4b5878;
+      --border:  rgba(255,255,255,0.07);
+      --sans:    'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--navy); color: var(--text-1); -webkit-font-smoothing: antialiased; line-height: 1.7; }
+    a { color: var(--accent-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 60px;
+      background: rgba(10,15,30,0.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 8px; }
+    .nav-logo img { height: 28px; }
+    .nav-logo span { font-size: 0.875rem; font-weight: 500; color: var(--text-1); }
+    .nav-back { font-size: 0.8125rem; color: var(--text-2); transition: color 0.2s; }
+    .nav-back:hover { color: var(--text-1); text-decoration: none; }
+    .container { max-width: 760px; margin: 0 auto; padding: 60px 5vw 100px; }
+    .policy-header { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+    .policy-header h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 600; margin-bottom: 0.75rem; }
+    .policy-meta { font-size: 0.875rem; color: var(--text-3); display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .toc { background: var(--navy-2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 3rem; }
+    .toc h3 { font-size: 0.875rem; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+    .toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 6px; }
+    .toc ol li { counter-increment: toc; }
+    .toc ol li a { font-size: 0.875rem; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+    .toc ol li a::before { content: counter(toc) "."; color: var(--text-3); font-size: 0.78rem; min-width: 20px; }
+    .toc ol li a:hover { color: var(--text-1); text-decoration: none; }
+    .policy-section { margin-bottom: 3rem; scroll-margin-top: 80px; }
+    .policy-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-1); display: flex; align-items: center; gap: 10px; }
+    .policy-section h2 .num { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #fff; flex-shrink: 0; }
+    .policy-section h3 { font-size: 1rem; font-weight: 500; margin: 1.5rem 0 0.625rem; color: var(--text-1); }
+    .policy-section p { font-size: 0.9375rem; color: var(--text-2); margin-bottom: 0.875rem; font-weight: 300; }
+    .policy-section ul, .policy-section ol { margin: 0.5rem 0 1rem 1.5rem; }
+    .policy-section li { font-size: 0.9375rem; color: var(--text-2); margin-bottom: 0.5rem; font-weight: 300; }
+    .info-box { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; border: 1px solid; font-size: 0.875rem; line-height: 1.6; }
+    .info-box.blue { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.25); color: #93c5fd; }
+    .info-box.red  { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.25);  color: #fca5a5; }
+    .info-box.amber{ background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: #fcd34d; }
+    .contact-card { background: var(--navy-2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+    .contact-card p { color: var(--text-2); font-size: 0.875rem; margin-bottom: 0.375rem; }
+    .contact-card p:last-child { margin-bottom: 0; }
+    .contact-card strong { color: var(--text-1); font-weight: 500; }
+    .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/index.html" class="nav-logo">
+    <img src="/assets/img/logo.png" alt="ReviewFilter Global">
+    <span>ReviewFilter Global</span>
+  </a>
+  <a href="/index.html" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="container">
+  <div class="policy-header">
+    <h1>Terms of Service</h1>
+    <div class="policy-meta">
+      <span>Last updated: January 1, 2025</span>
+      <span>Effective date: January 1, 2025</span>
+    </div>
+  </div>
+
+  <div class="info-box blue" style="margin-bottom:2rem;">
+    <strong>Plain English summary:</strong> By using ReviewFilter, you agree to use it legally and ethically. You must have customer consent before sending SMS. You cannot use us to fake reviews. We can suspend accounts that violate these terms.
+  </div>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#t1">Acceptance of Terms</a></li>
+      <li><a href="#t2">Description of Service</a></li>
+      <li><a href="#t3">Account Registration</a></li>
+      <li><a href="#t4">Acceptable Use</a></li>
+      <li><a href="#t5">SMS Compliance</a></li>
+      <li><a href="#t6">Subscriptions and Billing</a></li>
+      <li><a href="#t7">Intellectual Property</a></li>
+      <li><a href="#t8">Disclaimers</a></li>
+      <li><a href="#t9">Limitation of Liability</a></li>
+      <li><a href="#t10">Termination</a></li>
+      <li><a href="#t11">Governing Law</a></li>
+      <li><a href="#t12">Contact</a></li>
+    </ol>
+  </div>
+
+  <div class="policy-section" id="t1">
+    <h2><span class="num">1</span> Acceptance of Terms</h2>
+    <p>By accessing or using the ReviewFilter Global platform and services ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Service.</p>
+    <p>These Terms constitute a legally binding agreement between you ("User", "Business Owner") and ReviewFilter Global, operated by Kabantiok Zidyep David, Minna, Niger State, Nigeria.</p>
+    <p>We reserve the right to update these Terms at any time. Continued use of the Service after changes constitutes acceptance of the updated Terms.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t2">
+    <h2><span class="num">2</span> Description of Service</h2>
+    <p>ReviewFilter Global provides a review management platform that allows business owners to:</p>
+    <ul>
+      <li>Send SMS review invitations to their customers</li>
+      <li>Capture private feedback from customers who rate their experience 1–3 stars</li>
+      <li>Redirect satisfied customers (4–5 stars) to public review platforms (Google, Yelp, Trustpilot)</li>
+      <li>Manage and respond to private complaints via a dashboard</li>
+    </ul>
+    <p>The Service is designed to comply with Google Maps Content Policy and FTC guidelines. All customers who receive a review request retain the right to post a public review regardless of their rating.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t3">
+    <h2><span class="num">3</span> Account Registration</h2>
+    <p>To use the Service, you must create an account with a valid email address and password. You agree to:</p>
+    <ul>
+      <li>Provide accurate, current, and complete information during registration</li>
+      <li>Maintain the security of your password and account credentials</li>
+      <li>Immediately notify us of any unauthorised use of your account</li>
+      <li>Take responsibility for all activity that occurs under your account</li>
+    </ul>
+    <p>You must be at least 18 years old to create an account. By registering, you represent that you are 18 or older and have the legal authority to enter into these Terms.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t4">
+    <h2><span class="num">4</span> Acceptable Use</h2>
+    <p>You agree to use the Service only for lawful purposes and in accordance with these Terms. You agree NOT to:</p>
+    <ul>
+      <li>Send SMS invites to any person who has not given their explicit consent to receive SMS communications from your business</li>
+      <li>Use the Service to send spam, unsolicited commercial messages, or bulk SMS to people who are not your genuine customers</li>
+      <li>Fabricate, incentivise, or purchase reviews through the platform</li>
+      <li>Use the Service in a way that violates Google, Yelp, or Trustpilot review policies</li>
+      <li>Attempt to game or manipulate review platforms in a way that violates their terms</li>
+      <li>Use the Service to harass, threaten, or intimidate any person</li>
+      <li>Attempt to access other users' data, accounts, or the Service's administrative functions</li>
+      <li>Reverse engineer, decompile, or attempt to extract the source code of the platform</li>
+      <li>Use the Service for any illegal purpose under applicable local, national, or international law</li>
+    </ul>
+    <div class="info-box red">
+      <strong>Zero tolerance:</strong> Accounts found sending SMS to non-consenting recipients, fabricating reviews, or violating any platform's review policies will be immediately suspended without refund.
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t5">
+    <h2><span class="num">5</span> SMS Compliance</h2>
+    <p>You acknowledge and agree that:</p>
+    <ul>
+      <li>You are solely responsible for obtaining valid, documented consent from every customer before sending them an SMS via ReviewFilter</li>
+      <li>By checking the consent checkbox in the platform before each SMS send, you are making a legal declaration that the recipient has consented</li>
+      <li>You must comply with all applicable SMS and telecommunications laws in the jurisdiction of the recipient, including TCPA (US), CASL (Canada), PECR (UK), and applicable Nigerian telecommunications regulations</li>
+      <li>ReviewFilter Global acts solely as the technology infrastructure provider and bears no legal liability for SMS messages sent without valid consent</li>
+      <li>You will honour all opt-out requests from SMS recipients promptly</li>
+    </ul>
+    <p>ReviewFilter Global reserves the right to suspend any account that generates an unusual volume of opt-out requests or complaints to Twilio or telecommunications regulators.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t6">
+    <h2><span class="num">6</span> Subscriptions and Billing</h2>
+    <h3>6.1 Plans and pricing</h3>
+    <p>The Service is offered on a monthly subscription basis across three tiers: Starter ($49/mo), Growth ($129/mo), and Agency ($299/mo). Pricing is subject to change with 30 days' notice to existing subscribers.</p>
+    <h3>6.2 Payment processing</h3>
+    <p>All payments are processed by our third-party payment providers (Paddle or LemonSqueezy) acting as Merchant of Record. They handle all tax collection, VAT, and payment compliance. By subscribing, you agree to their terms of service.</p>
+    <h3>6.3 Refunds</h3>
+    <p>We offer a 7-day refund policy for first-time subscribers who have not sent more than 10 SMS invites. After 7 days or after exceeding 10 invites, no refunds are provided for the current billing period. Cancellations take effect at the end of the current billing cycle.</p>
+    <h3>6.4 Cancellation</h3>
+    <p>You may cancel your subscription at any time from your billing portal. Upon cancellation, you retain access to your account until the end of the paid period. No further charges will be made after cancellation.</p>
+    <div class="info-box amber">
+      <strong>SMS limits:</strong> Each plan includes a monthly SMS allowance. Unused SMS do not roll over to the next month. Exceeding your plan limit will disable SMS sending until your plan resets or you upgrade.
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t7">
+    <h2><span class="num">7</span> Intellectual Property</h2>
+    <p>The ReviewFilter Global platform, including its design, code, branding, and content, is the intellectual property of Kabantiok Zidyep David and ReviewFilter Global. All rights reserved.</p>
+    <p>You retain ownership of your business data and customer feedback data. By using the Service, you grant ReviewFilter Global a limited licence to process and store your data solely to provide the Service.</p>
+    <p>You may not copy, reproduce, distribute, or create derivative works from any part of the platform without prior written permission.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t8">
+    <h2><span class="num">8</span> Disclaimers</h2>
+    <p>The Service is provided "as is" and "as available" without warranties of any kind, either express or implied. ReviewFilter Global does not warrant that:</p>
+    <ul>
+      <li>The Service will be uninterrupted, error-free, or completely secure</li>
+      <li>Using the Service will result in a specific improvement to your public review rating</li>
+      <li>SMS messages will be delivered to all recipients (delivery depends on Twilio and carrier availability)</li>
+      <li>The Service will remain compatible with Google, Yelp, or Trustpilot platforms if those platforms change their policies</li>
+    </ul>
+    <p>ReviewFilter Global is not responsible for any changes to third-party review platform policies that may affect the functionality of the Service.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t9">
+    <h2><span class="num">9</span> Limitation of Liability</h2>
+    <p>To the maximum extent permitted by applicable law, ReviewFilter Global and its operator shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Service.</p>
+    <p>Our total liability to you for any claims arising from the use of the Service shall not exceed the total amount you paid for the Service in the three months preceding the claim.</p>
+    <p>You agree to indemnify and hold ReviewFilter Global harmless from any claims, damages, or expenses arising from your violation of these Terms, your violation of applicable SMS laws, or your misuse of the platform.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t10">
+    <h2><span class="num">10</span> Termination</h2>
+    <p>ReviewFilter Global reserves the right to suspend or terminate your account at any time, with or without notice, for:</p>
+    <ul>
+      <li>Violation of these Terms of Service</li>
+      <li>Sending SMS to non-consenting recipients</li>
+      <li>Fraudulent activity or abuse of the platform</li>
+      <li>Non-payment of subscription fees</li>
+      <li>Any activity that poses a legal or reputational risk to ReviewFilter Global</li>
+    </ul>
+    <p>Upon termination, your right to use the Service ceases immediately. You may request an export of your data within 30 days of termination. After 30 days, your data may be permanently deleted.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t11">
+    <h2><span class="num">11</span> Governing Law</h2>
+    <p>These Terms are governed by the laws of the Federal Republic of Nigeria. Any disputes shall first be attempted to be resolved through good-faith negotiation. If unresolved, disputes shall be submitted to the courts of Niger State, Nigeria.</p>
+    <p>For users in the European Union or United Kingdom, nothing in these Terms affects your statutory rights under applicable consumer protection laws.</p>
+  </div>
+  <div class="divider"></div>
+
+  <div class="policy-section" id="t12">
+    <h2><span class="num">12</span> Contact</h2>
+    <p>For questions about these Terms, contact us:</p>
+    <div class="contact-card">
+      <p><strong>ReviewFilter Global</strong></p>
+      <p>Operated by: <strong>Kabantiok Zidyep David</strong></p>
+      <p>Minna, Niger State, Nigeria</p>
+      <p>Email: <a href="mailto:hello@reviewfilterglobal.com">hello@reviewfilterglobal.com</a></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -134,6 +134,7 @@
 <script type="module">
   import { supabase } from '/js/supabase.js';
   import { renderSidebar, requireAuth, getProfile } from '/js/dashboard.js';
+  import '/js/tracker.js';
 
   // ── INIT ──────────────────────────────────────────────────────
   const session = await requireAuth();

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — ReviewFilter Global</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    .admin-topbar {
+      background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, var(--navy) 60%);
+      border-bottom: 1px solid var(--accent-bdr);
+    }
+    .admin-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.75rem;
+      overflow-x: auto;
+      padding-bottom: 0;
+    }
+    .tab {
+      padding: 10px 18px;
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--text-3);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: var(--sans);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+      margin-bottom: -1px;
+    }
+    .tab:hover { color: var(--text-2); }
+    .tab.active {
+      color: var(--text-1);
+      border-bottom-color: var(--accent);
+      font-weight: 500;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Business cards */
+    .biz-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .biz-row:last-child { border-bottom: none; }
+    .biz-row:hover { background: var(--navy-3); }
+    .biz-avatar-sm {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-bdr);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .biz-info-col { flex: 1; min-width: 0; }
+    .biz-info-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .biz-info-email {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Visit chart */
+    .visit-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .visit-bar-label {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      width: 40px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .visit-bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--navy-3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .visit-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+      display: flex;
+      align-items: center;
+      padding-left: 6px;
+    }
+    .visit-bar-count {
+      font-size: 0.6875rem;
+      color: #fff;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Hour heatmap */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4px;
+      margin-top: 1rem;
+    }
+    .heatmap-cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: var(--navy-3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: var(--text-3);
+      cursor: default;
+      transition: transform 0.15s;
+      position: relative;
+    }
+    .heatmap-cell:hover { transform: scale(1.15); }
+    .heatmap-cell .hour-label { font-size: 0.55rem; color: var(--text-3); }
+
+    /* Toggle active status */
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border-2);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      top: 3px; left: 3px;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--green); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+  </style>
+</head>
+<body>
+
+<div class="main" style="margin-left:0;">
+
+  <!-- Admin Topbar -->
+  <div class="topbar admin-topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <img src="/assets/img/logo.png" alt="ReviewFilter" style="height:28px;">
+      <span class="topbar-title">Admin Panel</span>
+      <span class="admin-badge">Super Admin</span>
+    </div>
+    <div class="topbar-right">
+      <span style="font-size:0.8125rem;color:var(--text-3);" id="admin-email"></span>
+      <button class="btn btn-ghost" id="btn-signout"
+        style="height:32px;padding:0 14px;font-size:0.8125rem;">
+        Sign Out
+      </button>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Platform Stats -->
+    <div class="stats-grid" style="margin-bottom:2rem;">
+      <div class="stat-card blue">
+        <div class="stat-label">🏢 Total Businesses</div>
+        <div class="stat-value" id="stat-total-biz">—</div>
+        <div class="stat-sub">Registered accounts</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">✅ Active Businesses</div>
+        <div class="stat-value" id="stat-active-biz">—</div>
+        <div class="stat-sub">Currently active</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">📨 Total SMS Sent</div>
+        <div class="stat-value" id="stat-total-sms">—</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">💬 Total Complaints</div>
+        <div class="stat-value" id="stat-total-complaints">—</div>
+        <div class="stat-sub">Private feedback captured</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">⭐ Happy Redirects</div>
+        <div class="stat-value" id="stat-happy">—</div>
+        <div class="stat-sub">Sent to Google/Yelp</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">👁 Site Visits Today</div>
+        <div class="stat-value" id="stat-visits-today">—</div>
+        <div class="stat-sub">Unique page views</div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab active" data-tab="businesses">Businesses</button>
+      <button class="tab" data-tab="visitors">Site Visitors</button>
+      <button class="tab" data-tab="invites">Recent Invites</button>
+      <button class="tab" data-tab="complaints">Recent Complaints</button>
+    </div>
+
+    <!-- TAB: BUSINESSES -->
+    <div class="tab-content active" id="tab-businesses">
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">All Registered Businesses</span>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="search-biz" class="form-input"
+              placeholder="Search by name…"
+              style="height:34px;width:200px;font-size:0.8125rem;">
+          </div>
+        </div>
+        <div id="businesses-list">
+          <div style="padding:2rem;text-align:center;color:var(--text-3);">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: VISITORS -->
+    <div class="tab-content" id="tab-visitors">
+
+      <!-- Daily visits chart -->
+      <div class="section-card" style="margin-bottom:1.25rem;">
+        <div class="section-card-header">
+          <span class="section-card-title">📈 Daily Visits — Last 14 Days</span>
+        </div>
+        <div class="section-card-body" id="daily-chart">
+          <div style="text-align:center;color:var(--text-3);">Loading…</div>
+        </div>
+      </div>
+
+      <!-- Hourly heatmap -->
+      <div class="section-card" style="margin-bottom:1.25rem;">
+        <div class="section-card-header">
+          <span class="section-card-title">🕐 Visits by Hour of Day</span>
+        </div>
+        <div class="section-card-body">
+          <p style="font-size:0.8125rem;color:var(--text-3);margin-bottom:0.5rem;">
+            Darker = more visits at that hour. Hover to see count.
+          </p>
+          <div class="heatmap-grid" id="hour-heatmap"></div>
+          <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
+            <span style="font-size:0.75rem;color:var(--text-3);">12am</span>
+            <span style="font-size:0.75rem;color:var(--text-3);margin-left:auto;">11am</span>
+          </div>
+          <div class="heatmap-grid" id="hour-heatmap-pm" style="margin-top:4px;"></div>
+          <div style="display:flex;gap:1rem;margin-top:0.5rem;flex-wrap:wrap;">
+            <span style="font-size:0.75rem;color:var(--text-3);">12pm</span>
+            <span style="font-size:0.75rem;color:var(--text-3);margin-left:auto;">11pm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent visits table -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">Recent Visits</span>
+        </div>
+        <div style="padding:0;" id="visits-table-wrap">
+          <div style="padding:2rem;text-align:center;color:var(--text-3);">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: RECENT INVITES -->
+    <div class="tab-content" id="tab-invites">
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">Recent Invites (All Businesses)</span>
+        </div>
+        <div style="padding:0;" id="all-invites">
+          <div style="padding:2rem;text-align:center;color:var(--text-3);">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: RECENT COMPLAINTS -->
+    <div class="tab-content" id="tab-complaints">
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">Recent Complaints (All Businesses)</span>
+        </div>
+        <div style="padding:0;" id="all-complaints">
+          <div style="padding:2rem;text-align:center;color:var(--text-3);">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { supabase } from '/js/supabase.js';
+
+  // ── ADMIN EMAIL — CHANGE THIS TO YOUR EMAIL ───────────────────
+  const ADMIN_EMAIL = 'reviewfilterglobal@gmail.com';
+
+  // ── AUTH GUARD ────────────────────────────────────────────────
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { window.location.href = '/auth/login.html'; }
+  if (session.user.email !== ADMIN_EMAIL) {
+    window.location.href = '/dashboard/index.html';
+  }
+
+  document.getElementById('admin-email').textContent = session.user.email;
+
+  // ── SIGN OUT ──────────────────────────────────────────────────
+  document.getElementById('btn-signout').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/auth/login.html';
+  });
+
+  // ── TABS ──────────────────────────────────────────────────────
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+
+      // lazy load tab data
+      if (tab.dataset.tab === 'visitors')   loadVisitors();
+      if (tab.dataset.tab === 'invites')    loadAllInvites();
+      if (tab.dataset.tab === 'complaints') loadAllComplaints();
+    });
+  });
+
+  // ── TRACK THIS VISIT ──────────────────────────────────────────
+  await supabase.from('site_visits').insert({
+    page:       '/admin/index.html',
+    user_agent: navigator.userAgent,
+  });
+
+  // ── LOAD PLATFORM STATS ───────────────────────────────────────
+  async function loadStats() {
+    // Total businesses
+    const { count: totalBiz } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true });
+
+    // Active businesses
+    const { count: activeBiz } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true);
+
+    // Total invites (SMS sent)
+    const { count: totalSMS } = await supabase
+      .from('invites')
+      .select('id', { count: 'exact', head: true });
+
+    // Total complaints
+    const { count: totalComplaints } = await supabase
+      .from('feedback_private')
+      .select('id', { count: 'exact', head: true });
+
+    // Happy redirects (4-5 stars)
+    const { count: happyCount } = await supabase
+      .from('invites')
+      .select('id', { count: 'exact', head: true })
+      .gte('rating_given', 4);
+
+    // Visits today
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    const { count: visitsToday } = await supabase
+      .from('site_visits')
+      .select('id', { count: 'exact', head: true })
+      .gte('visited_at', todayStart.toISOString());
+
+    document.getElementById('stat-total-biz').textContent       = totalBiz ?? 0;
+    document.getElementById('stat-active-biz').textContent      = activeBiz ?? 0;
+    document.getElementById('stat-total-sms').textContent       = totalSMS ?? 0;
+    document.getElementById('stat-total-complaints').textContent = totalComplaints ?? 0;
+    document.getElementById('stat-happy').textContent           = happyCount ?? 0;
+    document.getElementById('stat-visits-today').textContent    = visitsToday ?? 0;
+  }
+
+  // ── LOAD BUSINESSES ───────────────────────────────────────────
+  async function loadBusinesses() {
+    const { data: businesses } = await supabase
+      .from('profiles')
+      .select('id, business_name, emoji, plan, is_active, sms_used_this_month, sms_limit, created_at, google_review_url')
+      .order('created_at', { ascending: false });
+
+    renderBusinesses(businesses || []);
+
+    // search
+    document.getElementById('search-biz').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = (businesses || []).filter(b =>
+        b.business_name.toLowerCase().includes(q)
+      );
+      renderBusinesses(filtered);
+    });
+  }
+
+  function renderBusinesses(list) {
+    const el = document.getElementById('businesses-list');
+
+    if (list.length === 0) {
+      el.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-3);">No businesses found.</div>`;
+      return;
+    }
+
+    const planColors = {
+      starter: 'badge-gray',
+      growth:  'badge-blue',
+      agency:  'badge-green',
+    };
+
+    el.innerHTML = list.map(biz => {
+      const pct     = Math.min(Math.round(((biz.sms_used_this_month || 0) / (biz.sms_limit || 100)) * 100), 100);
+      const joined  = new Date(biz.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+
+      return `
+        <div class="biz-row">
+          <div class="biz-avatar-sm">${biz.emoji || '🏪'}</div>
+          <div class="biz-info-col">
+            <div class="biz-info-name">${biz.business_name}</div>
+            <div class="biz-info-email">Joined ${joined} · SMS: ${biz.sms_used_this_month || 0}/${biz.sms_limit || 100}</div>
+          </div>
+          <span class="badge ${planColors[biz.plan] || 'badge-gray'}" style="flex-shrink:0;">
+            ${biz.plan}
+          </span>
+          <label class="toggle-switch" title="${biz.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}">
+            <input type="checkbox" ${biz.is_active ? 'checked' : ''}
+              onchange="toggleBusiness('${biz.id}', this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>`;
+    }).join('');
+  }
+
+  // Toggle business active status
+  window.toggleBusiness = async (id, active) => {
+    await supabase
+      .from('profiles')
+      .update({ is_active: active })
+      .eq('id', id);
+  };
+
+  // ── LOAD VISITORS ─────────────────────────────────────────────
+  async function loadVisitors() {
+    // Last 14 days daily counts
+    const { data: visits } = await supabase
+      .from('site_visits')
+      .select('visited_at, page')
+      .order('visited_at', { ascending: false })
+      .limit(2000);
+
+    if (!visits || visits.length === 0) {
+      document.getElementById('daily-chart').innerHTML =
+        '<div style="color:var(--text-3);text-align:center;">No visits recorded yet.</div>';
+      return;
+    }
+
+    // Daily buckets — last 14 days
+    const dailyMap = {};
+    const today = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      dailyMap[key] = 0;
+    }
+
+    visits.forEach(v => {
+      const key = v.visited_at.slice(0, 10);
+      if (key in dailyMap) dailyMap[key]++;
+    });
+
+    const maxDaily = Math.max(...Object.values(dailyMap), 1);
+
+    // Render daily bar chart
+    const dailyHTML = Object.entries(dailyMap).map(([date, count]) => {
+      const pct   = Math.round((count / maxDaily) * 100);
+      const label = new Date(date).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+      return `
+        <div class="visit-bar-row">
+          <div class="visit-bar-label">${label}</div>
+          <div class="visit-bar-track">
+            <div class="visit-bar-fill" style="width:${pct}%">
+              ${count > 0 ? `<span class="visit-bar-count">${count}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('daily-chart').innerHTML = dailyHTML;
+
+    // Hourly heatmap
+    const hourMap = Array(24).fill(0);
+    visits.forEach(v => {
+      const hour = new Date(v.visited_at).getHours();
+      hourMap[hour]++;
+    });
+
+    const maxHour = Math.max(...hourMap, 1);
+
+    function heatmapCell(hour, count) {
+      const intensity = Math.round((count / maxHour) * 100);
+      const bg = count === 0
+        ? 'var(--navy-3)'
+        : `rgba(37,99,235,${0.1 + (intensity / 100) * 0.85})`;
+      const label = hour === 0 ? '12am' : hour < 12 ? `${hour}am` : hour === 12 ? '12pm' : `${hour-12}pm`;
+      return `
+        <div class="heatmap-cell" style="background:${bg};" title="${label}: ${count} visit${count !== 1 ? 's' : ''}">
+          <span class="hour-label">${label}</span>
+        </div>`;
+    }
+
+    document.getElementById('hour-heatmap').innerHTML =
+      hourMap.slice(0, 12).map((c, i) => heatmapCell(i, c)).join('');
+    document.getElementById('hour-heatmap-pm').innerHTML =
+      hourMap.slice(12, 24).map((c, i) => heatmapCell(i + 12, c)).join('');
+
+    // Recent visits table
+    const recent = visits.slice(0, 50);
+    document.getElementById('visits-table-wrap').innerHTML = `
+      <table class="data-table">
+        <thead><tr>
+          <th>Page</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Device</th>
+        </tr></thead>
+        <tbody>
+          ${recent.map(v => {
+            const dt     = new Date(v.visited_at);
+            const date   = dt.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+            const time   = dt.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+            const device = /mobile|android|iphone|ipad/i.test(v.user_agent || '')
+              ? '📱 Mobile' : '💻 Desktop';
+            return `
+              <tr>
+                <td style="color:var(--accent-2)">${v.page || '—'}</td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${device}</td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // ── LOAD ALL INVITES ──────────────────────────────────────────
+  async function loadAllInvites() {
+    const { data } = await supabase
+      .from('invites')
+      .select('customer_phone, customer_name, status, rating_given, platform, sent_at, business_id')
+      .order('sent_at', { ascending: false })
+      .limit(100);
+
+    const el = document.getElementById('all-invites');
+
+    if (!data || data.length === 0) {
+      el.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--text-3);">No invites yet.</div>`;
+      return;
+    }
+
+    const statusMap = {
+      sent:     '<span class="badge badge-blue">Sent</span>',
+      opened:   '<span class="badge badge-amber">Opened</span>',
+      rated:    '<span class="badge badge-green">Rated</span>',
+      reminded: '<span class="badge badge-gray">Reminded</span>',
+    };
+
+    el.innerHTML = `
+      <table class="data-table">
+        <thead><tr>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Platform</th>
+          <th>Rating</th>
+          <th>Status</th>
+          <th>Sent</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(inv => {
+            const date   = new Date(inv.sent_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+            const time   = new Date(inv.sent_at).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+            const rating = inv.rating_given
+              ? `<span class="stars">${'★'.repeat(inv.rating_given)}${'☆'.repeat(5 - inv.rating_given)}</span>`
+              : '—';
+            return `
+              <tr>
+                <td style="color:var(--text-1)">${inv.customer_name || '—'}</td>
+                <td>${inv.customer_phone}</td>
+                <td><span class="badge badge-gray">${inv.platform || 'google'}</span></td>
+                <td>${rating}</td>
+                <td>${statusMap[inv.status] || inv.status}</td>
+                <td style="color:var(--text-3)">${date} ${time}</td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // ── LOAD ALL COMPLAINTS ───────────────────────────────────────
+  async function loadAllComplaints() {
+    const { data } = await supabase
+      .from('feedback_private')
+      .select('reviewer_name, star_rating, complaint, submitted_at, resolution_status, business_id')
+      .order('submitted_at', { ascending: false })
+      .limit(100);
+
+    const el = document.getElementById('all-complaints');
+
+    if (!data || data.length === 0) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🎉</div>
+          <div class="empty-title">No complaints across any business</div>
+        </div>`;
+      return;
+    }
+
+    const resMap = {
+      action_required: '<span class="badge badge-red">Action Required</span>',
+      contacted:       '<span class="badge badge-amber">Contacted</span>',
+      resolved:        '<span class="badge badge-green">Resolved</span>',
+    };
+
+    el.innerHTML = `
+      <table class="data-table">
+        <thead><tr>
+          <th>Reviewer</th>
+          <th>Stars</th>
+          <th>Complaint</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(c => {
+            const date = new Date(c.submitted_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+            const short = c.complaint.length > 80 ? c.complaint.slice(0, 80) + '…' : c.complaint;
+            return `
+              <tr>
+                <td style="color:var(--text-1)">${c.reviewer_name || 'Anonymous'}</td>
+                <td><span class="stars">${'★'.repeat(c.star_rating)}${'☆'.repeat(5-c.star_rating)}</span></td>
+                <td style="color:var(--text-2)">${short}</td>
+                <td>${resMap[c.resolution_status || 'action_required']}</td>
+                <td style="color:var(--text-3)">${date}</td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────
+  loadStats();
+  loadBusinesses();
+</script>
+
+</body>
+</html>
