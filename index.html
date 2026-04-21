@@ -553,11 +553,12 @@
     .footer-links a:hover { color: var(--text-2); }
 
     /* ── SCROLL REVEAL ── */
-    .reveal {
+    /* Only hidden when JS is active - prevents invisible sections if JS fails */
+    .js-ready .reveal {
       opacity: 0; transform: translateY(24px);
       transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .js-ready .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
@@ -595,7 +596,7 @@
   <a href="auth/signup.html" style="color:var(--accent-2);font-weight:500;">Start free trial →</a>
 </div>
 
-<!-- ── HERO ── */ -->
+<!-- ── HERO ── -->
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-dots" id="hero-dots"></div>
@@ -613,7 +614,7 @@
   </p>
 
   <div class="hero-actions">
-    <a href="/auth/signup.html" class="btn-primary">
+    <a href="auth/signup.html" class="btn-primary">
       Start free — no credit card
     </a>
     <a href="#how" class="btn-ghost">
@@ -946,63 +947,74 @@
   </div>
 </footer>
 
-<script type="module">
-  import '/js/tracker.js';
+<script>
+  // ── MARK JS AS READY (enables scroll reveal hiding) ──────────
+  document.documentElement.classList.add('js-ready');
 
   // ── MOBILE NAV ────────────────────────────────────────────────
   const hamburger  = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
 
-  hamburger.addEventListener('click', () => {
+  hamburger.addEventListener('click', function() {
     mobileMenu.classList.toggle('open');
     hamburger.textContent = mobileMenu.classList.contains('open') ? '✕' : '☰';
   });
 
-  // Close menu on link click
-  mobileMenu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
+  mobileMenu.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
       mobileMenu.classList.remove('open');
       hamburger.textContent = '☰';
     });
   });
 
   // ── SCROLL REVEAL ─────────────────────────────────────────────
-  const observer = new IntersectionObserver(
-    (entries) => entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    }),
-    { threshold: 0.12 }
-  );
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      observer.observe(el);
+    });
+  } else {
+    // Fallback: show all immediately if IntersectionObserver not supported
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }
 
   // ── FLOATING DOTS ─────────────────────────────────────────────
   const dotsContainer = document.getElementById('hero-dots');
-  for (let i = 0; i < 12; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'dot';
-    const size = Math.random() * 4 + 2;
-    dot.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random() * 100}%;
-      bottom:${Math.random() * 20}%;
-      animation-duration:${Math.random() * 15 + 10}s;
-      animation-delay:${Math.random() * 10}s;
-    `;
-    dotsContainer.appendChild(dot);
+  if (dotsContainer) {
+    for (var i = 0; i < 12; i++) {
+      var dot = document.createElement('div');
+      dot.className = 'dot';
+      var size = Math.random() * 4 + 2;
+      dot.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + (Math.random() * 100) + '%;bottom:' + (Math.random() * 20) + '%;animation-duration:' + (Math.random() * 15 + 10) + 's;animation-delay:' + (Math.random() * 10) + 's;';
+      dotsContainer.appendChild(dot);
+    }
   }
 
   // ── FAQ ACCORDION ─────────────────────────────────────────────
-  document.querySelectorAll('.faq-item').forEach(item => {
-    item.querySelector('.faq-q').addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  document.querySelectorAll('.faq-item').forEach(function(item) {
+    item.querySelector('.faq-q').addEventListener('click', function() {
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  // ── VISITOR TRACKING (safe — won't crash page if fails) ───────
+  try {
+    import('/js/tracker.js').catch(function(){});
+  } catch(e) {}
 </script>
 
 </body>
