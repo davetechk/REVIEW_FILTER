@@ -1,11 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refund Policy — ReviewFilter Global</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refund Policy — ReviewFilter Global</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="../assets/img/log.png" type="image/x-icon">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:    #0a0f1e;
+      --navy-2:  #111827;
+      --navy-3:  #1a2236;
+      --accent:  #2563eb;
+      --accent-2:#3b82f6;
+      --text-1:  #f0f4ff;
+      --text-2:  #8b9ab8;
+      --text-3:  #4b5878;
+      --border:  rgba(255,255,255,0.07);
+      --sans:    'DM Sans', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--navy); color: var(--text-1); -webkit-font-smoothing: antialiased; line-height: 1.7; }
+    a { color: var(--accent-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 60px;
+      background: rgba(10,15,30,0.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 8px; }
+    .nav-logo img { height: 28px; }
+    .nav-logo span { font-size: 0.875rem; font-weight: 500; color: var(--text-1); }
+    .nav-back { font-size: 0.8125rem; color: var(--text-2); transition: color 0.2s; }
+    .nav-back:hover { color: var(--text-1); text-decoration: none; }
+    .container { max-width: 760px; margin: 0 auto; padding: 60px 5vw 100px; }
+    .policy-header { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+    .policy-header h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 600; margin-bottom: 0.75rem; }
+    .policy-meta { font-size: 0.875rem; color: var(--text-3); display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .toc { background: var(--navy-2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 3rem; }
+    .toc h3 { font-size: 0.875rem; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+    .toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 6px; }
+    .toc ol li { counter-increment: toc; }
+    .toc ol li a { font-size: 0.875rem; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+    .toc ol li a::before { content: counter(toc) "."; color: var(--text-3); font-size: 0.78rem; min-width: 20px; }
+    .toc ol li a:hover { color: var(--text-1); text-decoration: none; }
+    .policy-section { margin-bottom: 3rem; scroll-margin-top: 80px; }
+    .policy-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-1); display: flex; align-items: center; gap: 10px; }
+    .policy-section h2 .num { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #fff; flex-shrink: 0; }
+    .policy-section h3 { font-size: 1rem; font-weight: 500; margin: 1.5rem 0 0.625rem; color: var(--text-1); }
+    .policy-section p { font-size: 0.9375rem; color: var(--text-2); margin-bottom: 0.875rem; font-weight: 300; }
+    .policy-section ul, .policy-section ol { margin: 0.5rem 0 1rem 1.5rem; }
+    .policy-section li { font-size: 0.9375rem; color: var(--text-2); margin-bottom: 0.5rem; font-weight: 300; }
+    .info-box { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; border: 1px solid; font-size: 0.875rem; line-height: 1.6; }
+    .info-box.blue  { background: rgba(37,99,235,0.08);  border-color: rgba(37,99,235,0.25);  color: #93c5fd; }
+    .info-box.red   { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.25);  color: #fca5a5; }
+    .info-box.amber { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: #fcd34d; }
+    .info-box.green { background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.25);  color: #86efac; }
+    .contact-card { background: var(--navy-2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+    .contact-card p { color: var(--text-2); font-size: 0.875rem; margin-bottom: 0.375rem; }
+    .contact-card p:last-child { margin-bottom: 0; }
+    .contact-card strong { color: var(--text-1); font-weight: 500; }
+    .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+    /* Eligibility table */
+    .eligibility-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.25rem; font-size: 0.875rem; }
+    .eligibility-table th { text-align: left; padding: 0.6rem 0.875rem; background: var(--navy-3); color: var(--text-2); font-weight: 500; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .eligibility-table th:first-child { border-radius: 8px 0 0 0; }
+    .eligibility-table th:last-child  { border-radius: 0 8px 0 0; }
+    .eligibility-table td { padding: 0.625rem 0.875rem; border-bottom: 1px solid var(--border); color: var(--text-2); font-weight: 300; vertical-align: top; }
+    .eligibility-table tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+    .badge.yes { background: rgba(34,197,94,0.15); color: #86efac; }
+    .badge.no  { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+    .badge.case{ background: rgba(245,158,11,0.15); color: #fcd34d; }
+  </style>
 </head>
 <body>
-    <h1>COMING SOON - STAY TUNED</h1>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="assets/img/logo.png" alt="ReviewFilter Global">
+    <span>ReviewFilter Global</span>
+  </a>
+  <a href="index.html" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="container">
+  <div class="policy-header">
+    <h1>Refund Policy</h1>
+    <div class="policy-meta">
+      <span>Last updated: May 1, 2026</span>
+      <span>Effective date: March 1, 2026</span>
+    </div>
+  </div>
+
+  <div class="info-box green" style="margin-bottom:2rem;">
+    <strong>Plain English summary:</strong> New subscribers get a 7-day, no-questions-asked refund — as long as they've sent fewer than 10 SMS invites. After 7 days or after heavy usage, subscriptions are non-refundable but you can cancel anytime before your next billing cycle.
+  </div>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#r1">Overview</a></li>
+      <li><a href="#r2">7-Day Refund Eligibility</a></li>
+      <li><a href="#r3">Non-Refundable Situations</a></li>
+      <li><a href="#r4">Plan Upgrades &amp; Downgrades</a></li>
+      <li><a href="#r5">Cancellations</a></li>
+      <li><a href="#r6">How to Request a Refund</a></li>
+      <li><a href="#r7">Processing &amp; Timeline</a></li>
+      <li><a href="#r8">Exceptional Circumstances</a></li>
+      <li><a href="#r9">Contact</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <div class="policy-section" id="r1">
+    <h2><span class="num">1</span> Overview</h2>
+    <p>ReviewFilter Global is a subscription-based SaaS platform. Because the platform provides immediate access to digital services — including SMS sending credits and real-time review management tools — our refund eligibility is limited to a defined window for first-time subscribers.</p>
+    <p>All payments are processed by our Merchant of Record (Paddle or LemonSqueezy). Refund transactions are executed through the same platform and may be subject to their processing terms.</p>
+    <p>By subscribing to any ReviewFilter Global plan, you acknowledge and agree to the terms of this Refund Policy.</p>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 2 -->
+  <div class="policy-section" id="r2">
+    <h2><span class="num">2</span> 7-Day Refund Eligibility</h2>
+    <p>First-time subscribers are eligible for a full refund if <strong>all</strong> of the following conditions are met:</p>
+    <ul>
+      <li>The refund request is submitted within <strong>7 calendar days</strong> of the initial subscription payment date</li>
+      <li>You have sent <strong>10 or fewer SMS review invitations</strong> in total since subscribing</li>
+      <li>This is your <strong>first subscription</strong> to any ReviewFilter Global plan (not a renewal, upgrade, or re-subscription)</li>
+      <li>Your account is in good standing and has not been suspended for policy violations</li>
+    </ul>
+
+    <table class="eligibility-table">
+      <thead>
+        <tr>
+          <th>Condition</th>
+          <th>Required value</th>
+          <th>Eligible?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Days since first payment</td>
+          <td>≤ 7 days</td>
+          <td><span class="badge yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Days since first payment</td>
+          <td>&gt; 7 days</td>
+          <td><span class="badge no">No</span></td>
+        </tr>
+        <tr>
+          <td>SMS invites sent</td>
+          <td>≤ 10 invites</td>
+          <td><span class="badge yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>SMS invites sent</td>
+          <td>&gt; 10 invites</td>
+          <td><span class="badge no">No</span></td>
+        </tr>
+        <tr>
+          <td>Subscription type</td>
+          <td>First-time subscriber</td>
+          <td><span class="badge yes">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Subscription type</td>
+          <td>Renewal / re-subscription</td>
+          <td><span class="badge no">No</span></td>
+        </tr>
+        <tr>
+          <td>Technical issue (our fault)</td>
+          <td>Documented & verified</td>
+          <td><span class="badge case">Case-by-case</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box blue">
+      <strong>Note:</strong> The 7-day window begins from the timestamp of your first successful payment, not from account creation or first login. You can find this date in your billing portal or payment confirmation email.
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 3 -->
+  <div class="policy-section" id="r3">
+    <h2><span class="num">3</span> Non-Refundable Situations</h2>
+    <p>Refunds will <strong>not</strong> be issued in any of the following situations:</p>
+    <ul>
+      <li>The 7-day refund window has expired</li>
+      <li>More than 10 SMS invitations have been sent during the subscription period</li>
+      <li>The request is for a subscription renewal (monthly billing cycle after the first)</li>
+      <li>The account was suspended or terminated due to a violation of our <a href="terms.html">Terms of Service</a></li>
+      <li>The account was suspended for sending SMS to non-consenting recipients</li>
+      <li>The user claims they were unaware of the subscription charge after receiving a payment confirmation email</li>
+      <li>The user no longer wishes to use the service but remains within an active paid period</li>
+      <li>Partial-month usage — we do not prorate refunds for unused days within a billing cycle</li>
+    </ul>
+    <div class="info-box red">
+      <strong>No refund on suspension:</strong> Accounts terminated for sending SMS without consent, fabricating reviews, or any other Terms of Service violation are not eligible for refunds under any circumstances.
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 4 -->
+  <div class="policy-section" id="r4">
+    <h2><span class="num">4</span> Plan Upgrades &amp; Downgrades</h2>
+    <h3>4.1 Upgrades</h3>
+    <p>When you upgrade to a higher-tier plan mid-cycle, you will be charged the prorated difference for the remainder of the billing period. Upgrade charges are non-refundable once the higher-tier features have been accessed.</p>
+    <h3>4.2 Downgrades</h3>
+    <p>Downgrades take effect at the start of the next billing cycle. No refund or credit is issued for the difference in plan price during the current cycle.</p>
+    <h3>4.3 Plan changes and the 7-day window</h3>
+    <p>Changing your plan does not reset or extend the 7-day refund eligibility window. The window applies only to your first subscription payment and is calculated from that date.</p>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 5 -->
+  <div class="policy-section" id="r5">
+    <h2><span class="num">5</span> Cancellations</h2>
+    <p>You may cancel your subscription at any time from your billing portal. Cancellation stops future billing but does <strong>not</strong> constitute a refund request for the current billing period.</p>
+    <ul>
+      <li>Upon cancellation, your account remains active until the end of the paid billing cycle</li>
+      <li>You retain full access to your plan features until the cycle ends</li>
+      <li>No further charges are made after cancellation is confirmed</li>
+      <li>Cancelling within the 7-day window and meeting eligibility conditions qualifies you for a refund — you must submit a separate refund request (see Section 6)</li>
+    </ul>
+    <div class="info-box amber">
+      <strong>Reminder:</strong> Cancellation alone does not trigger a refund. If you are within the 7-day window and meet all eligibility criteria, you must also contact us to request the refund explicitly.
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 6 -->
+  <div class="policy-section" id="r6">
+    <h2><span class="num">6</span> How to Request a Refund</h2>
+    <p>To submit a refund request, email us at <a href="mailto:hello@reviewfilterglobal.com">hello@reviewfilterglobal.com</a> with the subject line <strong>"Refund Request — [Your Account Email]"</strong> and include the following:</p>
+    <ul>
+      <li>Your full name and the email address used to register your account</li>
+      <li>The date of your subscription payment (found in your payment confirmation email)</li>
+      <li>The plan you subscribed to (Starter, Growth, or Agency)</li>
+      <li>A brief reason for the refund request (optional but helpful)</li>
+    </ul>
+    <p>We will verify your SMS usage and subscription date against our records. You do not need to provide screenshots — we can confirm eligibility from our system.</p>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 7 -->
+  <div class="policy-section" id="r7">
+    <h2><span class="num">7</span> Processing &amp; Timeline</h2>
+    <p>Once your refund request is received and verified as eligible:</p>
+    <ul>
+      <li>We will confirm approval via email within <strong>2 business days</strong></li>
+      <li>The refund is initiated through Paddle or LemonSqueezy (our Merchant of Record)</li>
+      <li>Refunds typically appear on your original payment method within <strong>5–10 business days</strong>, depending on your bank or card issuer</li>
+      <li>If we determine your request is ineligible, we will notify you with the specific reason within 2 business days</li>
+    </ul>
+    <div class="info-box blue">
+      <strong>Processing note:</strong> Refund timing is controlled by our payment processor and your bank — ReviewFilter Global cannot speed up this process once a refund has been initiated.
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 8 -->
+  <div class="policy-section" id="r8">
+    <h2><span class="num">8</span> Exceptional Circumstances</h2>
+    <p>We evaluate refund requests outside the standard 7-day window on a case-by-case basis only in the following situations:</p>
+    <ul>
+      <li><strong>Platform outage:</strong> A verified, extended outage (48+ hours) that rendered the core platform unusable during your paid period</li>
+      <li><strong>Duplicate charge:</strong> You were charged twice for the same subscription period due to a billing error on our side</li>
+      <li><strong>Unauthorised charge:</strong> You did not authorise the subscription and have reported the matter promptly</li>
+    </ul>
+    <p>General dissatisfaction, changing business needs, or failure to use the platform during the subscription period do not qualify as exceptional circumstances.</p>
+    <p>To raise an exceptional circumstance claim, contact us at <a href="mailto:hello@reviewfilterglobal.com">hello@reviewfilterglobal.com</a> with a clear description of the issue and any supporting evidence.</p>
+  </div>
+  <div class="divider"></div>
+
+  <!-- 9 -->
+  <div class="policy-section" id="r9">
+    <h2><span class="num">9</span> Contact</h2>
+    <p>For refund requests or questions about this policy, reach us at:</p>
+    <div class="contact-card">
+      <p><strong>ReviewFilter Global</strong></p>
+      <p>Operated by: <strong>Kabantiok Zidyep David</strong></p>
+      <p>Minna, Niger State, Nigeria</p>
+      <p>Email: <a href="mailto:hello@reviewfilterglobal.com">hello@reviewfilterglobal.com</a></p>
+      <p style="margin-top:0.75rem; color: var(--text-3); font-size:0.8125rem;">Response time: within 2 business days</p>
+    </div>
+  </div>
+
+</div>
 </body>
 </html>
