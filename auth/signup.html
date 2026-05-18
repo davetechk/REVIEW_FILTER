@@ -100,12 +100,11 @@
 </div>
 
 <script type="module">
-  import { supabase } from '/js/supabase.js';
-  import { redirectIfLoggedIn } from '/js/auth.js';
-  import '/js/tracker.js';
+  import { supabase } from '/assets/js/supabase.js';
+  import { redirectIfLoggedIn } from '/auth.js';
 
   // redirect if already logged in
-  redirectIfLoggedIn();
+  await redirectIfLoggedIn();
 
   // ── DOM refs ──────────────────────────────────────────────────
   const inputBiz      = document.getElementById('business-name');
@@ -227,7 +226,7 @@
 
     // After 3 seconds redirect to login
     setTimeout(() => {
-      window.location.href = 'login.html';
+      window.location.href = 'onboarding.html';
     }, 3000);
   });
 

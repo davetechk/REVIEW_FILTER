@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resolution Centre — ReviewFilter Global</title>
   <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="icon" href="../assets/img/log.png" type="image/x-icon">
   <style>
     /* ── RESOLUTION STATUS BADGES ── */
     .status-action  { background:rgba(239,68,68,0.12);  color:#fca5a5; border:1px solid rgba(239,68,68,0.3);  }
@@ -24,7 +25,7 @@
       flex-wrap: wrap;
     }
     .btn-resolve {
-      height: 30px;
+      height: 44px;
       padding: 0 12px;
       border-radius: 6px;
       font-size: 0.78rem;
@@ -53,7 +54,7 @@
       background: var(--navy-3);
       border: 1px solid var(--border-2);
       color: var(--text-2);
-      padding: 6px 16px;
+      padding: 10px 16px;
       border-radius: 100px;
       font-size: 0.8125rem;
       font-family: var(--sans);
@@ -140,13 +141,14 @@
 
 <script type="module">
   import { supabase } from '/js/supabase.js';
-  import { renderSidebar, requireAuth, getProfile } from '/js/dashboard.js';
+  import { renderSidebar, requireAuth, getProfile, sanitize } from '/js/dashboard.js';
 
   const session = await requireAuth();
   if (!session) throw new Error('no session');
   renderSidebar('complaints');
 
   const profile = await getProfile();
+  if (!profile) { window.location.href = '/auth/login.html'; }
   const bizId   = profile.id;
 
   let allComplaints = [];
@@ -229,12 +231,12 @@
       return `
         <div class="complaint-card ${status.replace('_','-')}" id="complaint-${c.id}">
           <div class="complaint-meta">
-            <span class="complaint-name">${c.reviewer_name || 'Anonymous'}</span>
+            <span class="complaint-name">${sanitize(c.reviewer_name) || 'Anonymous'}</span>
             <span class="stars" style="font-size:0.8125rem;">${stars}</span>
             ${statusLabels[status] || ''}
             <span class="complaint-time">${date}</span>
           </div>
-          <div class="complaint-text">${c.complaint}</div>
+          <div class="complaint-text">${sanitize(c.complaint)}</div>
           ${actionBtns}
         </div>`;
     }).join('');

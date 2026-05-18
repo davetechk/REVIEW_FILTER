@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Send Invite — ReviewFilter Global</title>
   <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="icon" href="../assets/img/log.png" type="image/x-icon">
   <style>
     .consent-box {
       display: flex;
@@ -139,13 +140,14 @@
 
 <script type="module">
   import { supabase } from '/js/supabase.js';
-  import { renderSidebar, requireAuth, getProfile } from '/js/dashboard.js';
+  import { renderSidebar, requireAuth, getProfile, sanitize } from '/js/dashboard.js';
 
   const session = await requireAuth();
   if (!session) throw new Error('no session');
   renderSidebar('send-invite');
 
   const profile = await getProfile();
+  if (!profile) { window.location.href = '/auth/login.html'; }
 
   document.getElementById('topbar-plan').textContent =
     profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan';
@@ -206,7 +208,7 @@
         <tbody>
           ${data.map(inv => `
             <tr>
-              <td style="color:var(--text-1)">${inv.customer_name || '—'}</td>
+              <td style="color:var(--text-1)">${sanitize(inv.customer_name || '—')}</td>
               <td>${inv.customer_phone}</td>
               <td>${statusMap[inv.status] || inv.status}</td>
               <td>${new Date(inv.sent_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</td>
@@ -272,45 +274,16 @@
       btnSend.innerHTML = 'Send Review Invite via SMS';
       return;
     }
-// Get session fresh
-const sessionRes = await supabase.auth.getSession();
-const accessToken = sessionRes.data.session?.access_token;
 
-if (!accessToken) {
-  showError('Session expired. Please refresh the page and try again.');
-  btnSend.disabled = false;
-  btnSend.innerHTML = 'Send Review Invite via SMS';
-  return;
-}
-
-const smsRes = await fetch(
-  'https://mvmqrrwqnvwyajgynjul.supabase.co/functions/v1/send-sms',
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-      'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12bXFycndxbnZ3eWFqZ3luanVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MjEzMzQsImV4cCI6MjA5MDk5NzMzNH0.Cp77f9Uez8fn60n2tMigfEmE--cnmJPxZqD-NBGty60',
-    },
-    body: JSON.stringify({ 
-      to: phone, 
-      businessName: profile.business_name, 
-      token 
-    }),
-  }
-);
-
-const smsResult = await smsRes.json();
-const smsError  = smsResult.error ? { message: smsResult.error } : null;
-
+    const { error: smsError } = await supabase.functions.invoke('send-sms', {
+      body: { to: phone, businessName: profile.business_name, token }
+    });
 
     if (smsError) {
       showError('Invite saved but SMS failed to send. Check your Twilio setup in Settings.');
     } else {
-      await supabase
-        .from('profiles')
-        .update({ sms_used_this_month: used + 1 })
-        .eq('id', profile.id);
+      // Atomic increment via RPC to prevent race condition
+      await supabase.rpc('increment_sms_count', { profile_id: profile.id });
       showSuccess(`✅ Invite sent to ${phone}!`);
       document.getElementById('customer-phone').value  = '';
       document.getElementById('customer-name').value   = '';

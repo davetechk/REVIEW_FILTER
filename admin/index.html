@@ -336,6 +336,7 @@
 
 <script type="module">
   import { supabase } from '/js/supabase.js';
+import { sanitize } from '/js/dashboard.js';
 
   // ── ADMIN EMAIL — CHANGE THIS TO YOUR EMAIL ───────────────────
   const ADMIN_EMAIL = 'reviewfilterglobal@gmail.com';
@@ -463,7 +464,7 @@
         <div class="biz-row">
           <div class="biz-avatar-sm">${biz.emoji || '🏪'}</div>
           <div class="biz-info-col">
-            <div class="biz-info-name">${biz.business_name}</div>
+            <div class="biz-info-name">${sanitize(biz.business_name)}</div>
             <div class="biz-info-email">Joined ${joined} · SMS: ${biz.sms_used_this_month || 0}/${biz.sms_limit || 100}</div>
           </div>
           <span class="badge ${planColors[biz.plan] || 'badge-gray'}" style="flex-shrink:0;">
@@ -631,7 +632,7 @@
               : '—';
             return `
               <tr>
-                <td style="color:var(--text-1)">${inv.customer_name || '—'}</td>
+                <td style="color:var(--text-1)">${sanitize(inv.customer_name || '—')}</td>
                 <td>${inv.customer_phone}</td>
                 <td><span class="badge badge-gray">${inv.platform || 'google'}</span></td>
                 <td>${rating}</td>
@@ -683,9 +684,9 @@
             const short = c.complaint.length > 80 ? c.complaint.slice(0, 80) + '…' : c.complaint;
             return `
               <tr>
-                <td style="color:var(--text-1)">${c.reviewer_name || 'Anonymous'}</td>
+                <td style="color:var(--text-1)">${sanitize(c.reviewer_name || 'Anonymous')}</td>
                 <td><span class="stars">${'★'.repeat(c.star_rating)}${'☆'.repeat(5-c.star_rating)}</span></td>
-                <td style="color:var(--text-2)">${short}</td>
+                <td style="color:var(--text-2)">${sanitize(short)}</td>
                 <td>${resMap[c.resolution_status || 'action_required']}</td>
                 <td style="color:var(--text-3)">${date}</td>
               </tr>`;

@@ -1,5 +1,19 @@
 import { supabase } from '/js/supabase.js';
 
+// ── XSS SANITIZER ─────────────────────────────────────────────
+// Use this on ALL user-supplied content before inserting into innerHTML
+export function sanitize(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+
+
 // ── RENDER SIDEBAR ────────────────────────────────────────────
 export function renderSidebar(activePage) {
   const nav = [

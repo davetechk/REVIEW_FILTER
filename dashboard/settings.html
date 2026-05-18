@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings — ReviewFilter Global</title>
   <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="icon" href="../assets/img/log.png" type="image/x-icon">
 </head>
 <body>
 
@@ -158,7 +159,7 @@
           </div>
 
           <p style="font-size:0.75rem;color:var(--text-3);margin-top:0.875rem;">
-            Payments handled securely by LemonSqueezy. Cancel anytime.
+            Payments handled securely by Paddle. Cancel anytime.
           </p>
 
         </div>
@@ -191,6 +192,7 @@
   renderSidebar('settings');
 
   const profile = await getProfile();
+  if (!profile) { window.location.href = '/auth/login.html'; }
 
   // ── POPULATE FIELDS ───────────────────────────────────────────
   document.getElementById('business-name').value  = profile.business_name  || '';

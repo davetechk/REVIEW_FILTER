@@ -216,11 +216,11 @@
 
 <p class="pay-note">
   <span class="pdot"></span>
-  Payments by LemonSqueezy · Global cards, PayPal · Cancel anytime
+  Payments by Paddle · Global cards, PayPal · Cancel anytime
 </p>
 
 <div class="skip-wrap">
-  <a href="dashboard/index.html">Skip for now — explore the dashboard free →</a>
+  <a href="../dashboard/index.html">Skip for now — explore the dashboard free →</a>
 </div>
 
 <script type="module">
@@ -230,6 +230,7 @@
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     window.location.href = '/auth/login.html';
+    return;
   }
 
   // ── Personalise welcome ───────────────────────────────────────
