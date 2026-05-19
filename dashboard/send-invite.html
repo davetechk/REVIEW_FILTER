@@ -137,6 +137,7 @@
     </div>
   </div>
 </div>
+
 <script type="module">
   import { supabase } from '/js/supabase.js';
   import { renderSidebar, requireAuth, getProfile, sanitize } from '/js/dashboard.js';
@@ -146,15 +147,7 @@
   renderSidebar('send-invite');
 
   const profile = await getProfile();
-  if (!profile) { window.location.href = '/auth/login.html'; return; }
-
-  // ── PAYMENT GATE ──────────────────────────────────────────────
-  if (profile.subscription_status !== 'active') {
-    document.getElementById('btn-send').disabled = true;
-    const ae = document.getElementById('alert-error');
-    ae.innerHTML = `⚠️ You need an active plan to send SMS invites. <a href="/auth/onboarding.html" style="color:var(--accent-2);font-weight:500;">Choose a plan →</a>`;
-    ae.classList.add('visible');
-  }
+  if (!profile) { window.location.href = '/auth/login.html'; throw new Error('no profile'); }
 
   // ── PLAN LABEL ────────────────────────────────────────────────
   const planLabel = profile.subscription_status === 'active'
@@ -174,18 +167,27 @@
   if (pct >= 90) bar.classList.add('danger');
   else if (pct >= 70) bar.classList.add('warning');
 
-  if (used >= limit) {
-    const la = document.getElementById('alert-limit');
-    la.textContent = `You have used all ${limit} SMS invites this month. Upgrade your plan to continue.`;
-    la.style.display = 'block';
-    la.classList.add('visible');
+  // ── PAYMENT GATE ──────────────────────────────────────────────
+  if (profile.subscription_status !== 'active') {
     document.getElementById('btn-send').disabled = true;
-  }
-
-  if (!profile.google_review_url && !profile.yelp_url && !profile.trustpilot_url) {
     const ae = document.getElementById('alert-error');
-    ae.innerHTML = '⚠️ No review links set yet. <a href="/dashboard/settings.html" style="color:var(--accent-2);">Go to Settings →</a>';
+    ae.innerHTML = `⚠️ You need an active plan to send SMS invites. <a href="/auth/onboarding.html" style="color:var(--accent-2);font-weight:500;">Choose a plan →</a>`;
     ae.classList.add('visible');
+  } else {
+    // Only check these if user has active subscription
+    if (used >= limit) {
+      const la = document.getElementById('alert-limit');
+      la.textContent = `You have used all ${limit} SMS invites this month. Upgrade your plan to continue.`;
+      la.style.display = 'block';
+      la.classList.add('visible');
+      document.getElementById('btn-send').disabled = true;
+    }
+
+    if (!profile.google_review_url && !profile.yelp_url && !profile.trustpilot_url) {
+      const ae = document.getElementById('alert-error');
+      ae.innerHTML = '⚠️ No review links set yet. <a href="/dashboard/settings.html" style="color:var(--accent-2);">Go to Settings →</a>';
+      ae.classList.add('visible');
+    }
   }
 
   loadToday(profile.id);
@@ -289,6 +291,13 @@
     const sessionRes  = await supabase.auth.getSession();
     const accessToken = sessionRes.data.session?.access_token;
 
+    if (!accessToken) {
+      showError('Session expired. Please refresh the page and try again.');
+      btnSend.disabled = false;
+      btnSend.innerHTML = 'Send Review Invite via SMS';
+      return;
+    }
+
     const smsRes = await fetch(
       'https://mvmqrrwqnvwyajgynjul.supabase.co/functions/v1/send-sms',
       {
@@ -324,5 +333,6 @@
     btnSend.innerHTML = 'Send Review Invite via SMS';
   });
 </script>
+
 </body>
 </html>
