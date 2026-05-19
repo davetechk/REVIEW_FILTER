@@ -153,9 +153,10 @@
   document.getElementById('welcome-title').textContent = `${greeting}, ${profile.business_name} 👋`;
 
   // Plan badge
-  const plan = profile.plan;
-  document.getElementById('topbar-plan').textContent =
-    plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+  const planLabel = profile.subscription_status === 'active' 
+  ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan'
+  : 'Free — Upgrade to send SMS';
+document.getElementById('topbar-plan').textContent = planLabel;
 
   // Setup banner
   if (!profile.google_review_url) {
