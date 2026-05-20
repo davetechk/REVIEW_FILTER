@@ -89,8 +89,25 @@
     .pill-contacted{ background:rgba(245,158,11,0.08); color:#fcd34d; border-color:rgba(245,158,11,0.25); }
     .pill-resolved { background:rgba(16,185,129,0.08); color:#6ee7b7; border-color:rgba(16,185,129,0.25); }
   </style>
+  <link rel="stylesheet" href="../css/paywall.css">
 </head>
 <body>
+
+  <!-- PAYWALL OVERLAY — injected by JS for free users -->
+  <div class="paywall-overlay" id="paywall-overlay" style="display:none;">
+    <div class="paywall-card">
+      <div class="paywall-icon">🚀</div>
+      <div class="paywall-title">Activate Your Plan</div>
+      <div class="paywall-sub">
+        Choose a plan to unlock full access to your dashboard,
+        send SMS review invites, and start growing your ratings.
+      </div>
+      <a href="../auth/onboarding.html" class="paywall-btn">
+        View Plans & Pricing →
+      </a>
+      <div class="paywall-free-note">No credit card required to explore. Cancel anytime.</div>
+    </div>
+  </div>
 
 <div class="main">
   <div class="topbar">
@@ -148,7 +165,14 @@
   renderSidebar('complaints');
 
   const profile = await getProfile();
-  if (!profile) { window.location.href = '/auth/login.html'; }
+  if (!profile) { window.location.href = '/auth/login.html'; throw new Error('no profile'); }
+
+  // ── PAYWALL CHECK ─────────────────────────────────────────────
+  if (profile.subscription_status !== 'active') {
+    document.body.classList.add('page-blurred');
+    document.getElementById('paywall-overlay').style.display = 'flex';
+  }
+
   const bizId   = profile.id;
 
   let allComplaints = [];

@@ -32,25 +32,8 @@
     }
     .consent-box label strong { color: var(--text-1); font-weight: 500; }
   </style>
-  <link rel="stylesheet" href="../css/paywall.css">
 </head>
 <body>
-
-  <!-- PAYWALL OVERLAY — injected by JS for free users -->
-  <div class="paywall-overlay" id="paywall-overlay" style="display:none;">
-    <div class="paywall-card">
-      <div class="paywall-icon">🚀</div>
-      <div class="paywall-title">Activate Your Plan</div>
-      <div class="paywall-sub">
-        Choose a plan to unlock full access to your dashboard,
-        send SMS review invites, and start growing your ratings.
-      </div>
-      <a href="../auth/onboarding.html" class="paywall-btn">
-        View Plans & Pricing →
-      </a>
-      <div class="paywall-free-note">No credit card required to explore. Cancel anytime.</div>
-    </div>
-  </div>
 
 <div class="main">
   <div class="topbar">
@@ -89,7 +72,7 @@
             <label class="form-label" for="customer-phone">Customer Phone Number</label>
             <input type="tel" id="customer-phone" class="form-input"
               placeholder="+1 555 000 0000" autocomplete="off">
-            <div class="form-hint">Include country code — e.g. +1 for US, +44 for UK.</div>
+            <div class="form-hint">Include country code — e.g. +1 for US, +44 for UK, +234 for Nigeria.</div>
           </div>
 
           <div class="form-group">
@@ -164,16 +147,19 @@
   renderSidebar('send-invite');
 
   const profile = await getProfile();
-  if (!profile) { window.location.href = '/auth/login.html'; }
+  if (!profile) { window.location.href = '/auth/login.html'; throw new Error('no profile'); }
 
-  document.getElementById('topbar-plan').textContent =
-    profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan';
+  // ── PLAN LABEL ────────────────────────────────────────────────
+  const planLabel = profile.subscription_status === 'active'
+    ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan'
+    : 'Free — Upgrade';
+  document.getElementById('topbar-plan').textContent = planLabel;
 
   const used  = profile.sms_used_this_month ?? 0;
   const limit = profile.sms_limit ?? 100;
   const pct   = Math.min(Math.round((used / limit) * 100), 100);
 
-  document.getElementById('sms-count-label').textContent    = `${used} / ${limit}`;
+  document.getElementById('sms-count-label').textContent     = `${used} / ${limit}`;
   document.getElementById('sms-remaining-label').textContent = `${limit - used} invites remaining this month`;
 
   const bar = document.getElementById('sms-bar');
@@ -181,18 +167,27 @@
   if (pct >= 90) bar.classList.add('danger');
   else if (pct >= 70) bar.classList.add('warning');
 
-  if (used >= limit) {
-    const la = document.getElementById('alert-limit');
-    la.textContent = `You have used all ${limit} SMS invites this month. Upgrade your plan to continue.`;
-    la.style.display = 'block';
-    la.classList.add('visible');
+  // ── PAYMENT GATE ──────────────────────────────────────────────
+  if (profile.subscription_status !== 'active') {
     document.getElementById('btn-send').disabled = true;
-  }
-
-  if (!profile.google_review_url && !profile.yelp_url && !profile.trustpilot_url) {
     const ae = document.getElementById('alert-error');
-    ae.innerHTML = '⚠️ No review links set yet. <a href="/dashboard/settings.html" style="color:var(--accent-2);">Go to Settings →</a>';
+    ae.innerHTML = `⚠️ You need an active plan to send SMS invites. <a href="/auth/onboarding.html" style="color:var(--accent-2);font-weight:500;">Choose a plan →</a>`;
     ae.classList.add('visible');
+  } else {
+    // Only check these if user has active subscription
+    if (used >= limit) {
+      const la = document.getElementById('alert-limit');
+      la.textContent = `You have used all ${limit} SMS invites this month. Upgrade your plan to continue.`;
+      la.style.display = 'block';
+      la.classList.add('visible');
+      document.getElementById('btn-send').disabled = true;
+    }
+
+    if (!profile.google_review_url && !profile.yelp_url && !profile.trustpilot_url) {
+      const ae = document.getElementById('alert-error');
+      ae.innerHTML = '⚠️ No review links set yet. <a href="/dashboard/settings.html" style="color:var(--accent-2);">Go to Settings →</a>';
+      ae.classList.add('visible');
+    }
   }
 
   loadToday(profile.id);
@@ -234,7 +229,7 @@
       </table>`;
   }
 
-  // ── SEND ─────────────────────────────────────────────────────
+  // ── SEND ──────────────────────────────────────────────────────
   const btnSend      = document.getElementById('btn-send');
   const alertError   = document.getElementById('alert-error');
   const alertSuccess = document.getElementById('alert-success');
@@ -292,7 +287,6 @@
       return;
     }
 
-
     // ── CALL BIRD EDGE FUNCTION ───────────────────────────────
     const sessionRes  = await supabase.auth.getSession();
     const accessToken = sessionRes.data.session?.access_token;
@@ -321,16 +315,12 @@
       }
     );
 
-
-
-    const { error: smsError } = await supabase.functions.invoke('send-sms', {
-      body: { to: phone, businessName: profile.business_name, token }
-    });
+    const smsResult = await smsRes.json();
+    const smsError  = smsResult.error ? { message: smsResult.error } : null;
 
     if (smsError) {
-      showError('Invite saved but SMS failed to send. Check your Twilio setup in Settings.');
+      showError('Invite saved but SMS failed to send. Check your settings.');
     } else {
-      // Atomic increment via RPC to prevent race condition
       await supabase.rpc('increment_sms_count', { profile_id: profile.id });
       showSuccess(`✅ Invite sent to ${phone}!`);
       document.getElementById('customer-phone').value  = '';

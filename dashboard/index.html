@@ -6,9 +6,30 @@
   <title>Dashboard — ReviewFilter Global</title>
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="icon" href="../assets/img/log.png" type="image/x-icon">
-
+<style>
+@media (max-width: 640px) {
+  .two-col-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+  <link rel="stylesheet" href="../css/paywall.css">
 </head>
 <body>
+
+  <!-- PAYWALL OVERLAY — injected by JS for free users -->
+  <div class="paywall-overlay" id="paywall-overlay" style="display:none;">
+    <div class="paywall-card">
+      <div class="paywall-icon">🚀</div>
+      <div class="paywall-title">Activate Your Plan</div>
+      <div class="paywall-sub">
+        Choose a plan to unlock full access to your dashboard,
+        send SMS review invites, and start growing your ratings.
+      </div>
+      <a href="../auth/onboarding.html" class="paywall-btn">
+        View Plans & Pricing →
+      </a>
+      <div class="paywall-free-note">No credit card required to explore. Cancel anytime.</div>
+    </div>
+  </div>
 
 <!-- Sidebar injected by JS -->
 
@@ -72,7 +93,7 @@
     </div>
 
     <!-- Two columns -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;" class="two-col-grid">
 
       <!-- Recent Invites -->
       <div class="section-card">
@@ -135,8 +156,7 @@
 
 <script type="module">
   import { supabase } from '/js/supabase.js';
-  import { renderSidebar, requireAuth, getProfile } from '/js/dashboard.js';
-  import '/js/tracker.js';
+  import { renderSidebar, requireAuth, getProfile, sanitize } from '/js/dashboard.js';
 
   // ── INIT ──────────────────────────────────────────────────────
   const session = await requireAuth();
@@ -145,7 +165,14 @@
   renderSidebar('index');
 
   const profile = await getProfile();
-  if (!profile) { window.location.href = '/auth/login.html'; }
+  if (!profile) { window.location.href = '/auth/login.html'; throw new Error('no profile'); }
+
+  // ── PAYWALL CHECK ─────────────────────────────────────────────
+  if (profile.subscription_status !== 'active') {
+    document.body.classList.add('page-blurred');
+    document.getElementById('paywall-overlay').style.display = 'flex';
+  }
+
 
   // Welcome greeting
   const hour = new Date().getHours();
@@ -153,10 +180,9 @@
   document.getElementById('welcome-title').textContent = `${greeting}, ${profile.business_name} 👋`;
 
   // Plan badge
-  const planLabel = profile.subscription_status === 'active' 
-  ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan'
-  : 'Free — Upgrade to send SMS';
-document.getElementById('topbar-plan').textContent = planLabel;
+  const plan = profile.plan;
+  document.getElementById('topbar-plan').textContent =
+    plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
 
   // Setup banner
   if (!profile.google_review_url) {
@@ -244,7 +270,7 @@ document.getElementById('topbar-plan').textContent = planLabel;
       const date = new Date(inv.sent_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
       return `
         <tr>
-          <td style="color:var(--text-1);font-weight:500;">${name}</td>
+          <td style="color:var(--text-1);font-weight:500;">${sanitize(name)}</td>
           <td>${rating}</td>
           <td>${statusMap[inv.status] || inv.status}</td>
           <td>${date}</td>
@@ -279,7 +305,7 @@ document.getElementById('topbar-plan').textContent = planLabel;
             ${new Date(c.submitted_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}
           </span>
         </div>
-        <div class="complaint-text">${c.complaint.length > 120 ? c.complaint.slice(0,120) + '…' : c.complaint}</div>
+        <div class="complaint-text">${sanitize(c.complaint.length > 120 ? c.complaint.slice(0,120) + '…' : c.complaint)}</div>
       </div>
     `).join('');
   }

@@ -138,10 +138,10 @@
             <div class="usage-bar-fill" id="plan-sms-bar" style="width:0%"></div>
           </div>
 
-          <!-- Upgrade buttons → LemonSqueezy -->
+          <!-- Upgrade buttons → Dodo Payment -->
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
             <a
-              href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/GROWTH_PLAN_ID"
+              href="../auth/onboarding.html"
               target="_blank"
               class="btn btn-primary"
               id="btn-upgrade-growth"
@@ -149,7 +149,7 @@
               Upgrade to Growth — $129/mo
             </a>
             <a
-              href="https://YOUR_STORE.lemonsqueezy.com/checkout/buy/AGENCY_PLAN_ID"
+              href="../auth/onboarding.html"
               target="_blank"
               class="btn btn-ghost"
               id="btn-upgrade-agency"
@@ -159,7 +159,7 @@
           </div>
 
           <p style="font-size:0.75rem;color:var(--text-3);margin-top:0.875rem;">
-            Payments handled securely by Paddle. Cancel anytime.
+            Payments handled securely by Dodo Payment. Cancel anytime.
           </p>
 
         </div>
@@ -192,7 +192,7 @@
   renderSidebar('settings');
 
   const profile = await getProfile();
-  if (!profile) { window.location.href = '/auth/login.html'; }
+  if (!profile) { window.location.href = '/auth/login.html'; throw new Error('no profile'); }
 
   // ── POPULATE FIELDS ───────────────────────────────────────────
   document.getElementById('business-name').value  = profile.business_name  || '';
