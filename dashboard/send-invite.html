@@ -164,10 +164,17 @@
   renderSidebar('send-invite');
 
   const profile = await getProfile();
-  if (!profile) { window.location.href = '/auth/login.html'; }
+  if (!profile) { window.location.href = '/auth/login.html'; throw new Error('no profile'); }
 
-  document.getElementById('topbar-plan').textContent =
-    profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan';
+  if (profile.subscription_status !== 'active') {
+    document.body.classList.add('page-blurred');
+    document.getElementById('paywall-overlay').style.display = 'flex';
+  }
+
+  const planLabel = profile.subscription_status === 'active'
+    ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + ' Plan'
+    : 'Free — Upgrade';
+  document.getElementById('topbar-plan').textContent = planLabel;
 
   const used  = profile.sms_used_this_month ?? 0;
   const limit = profile.sms_limit ?? 100;
@@ -323,12 +330,11 @@
 
 
 
-    const { error: smsError } = await supabase.functions.invoke('send-sms', {
-      body: { to: phone, businessName: profile.business_name, token }
-    });
+    const smsResult = await smsRes.json();
+    const smsError  = smsResult.error ? { message: smsResult.error } : null;
 
     if (smsError) {
-      showError('Invite saved but SMS failed to send. Check your Twilio setup in Settings.');
+      showError('Invite saved but SMS failed to send. Check your Bird setup in Settings.');
     } else {
       // Atomic increment via RPC to prevent race condition
       await supabase.rpc('increment_sms_count', { profile_id: profile.id });
